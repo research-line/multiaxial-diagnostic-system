@@ -19,7 +19,6 @@ Run: python build_code_database.py
 
 import sqlite3
 import os
-import sys
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diagnostic_codes.db")
 
@@ -139,7 +138,7 @@ ICD11_PSYCHIATRIC = [
 
     # --- Anxiety and Fear-Related Disorders (6B00-6B0Z) ---
     ("6B00", "Generalisierte Angststoerung", "Generalised anxiety disorder", "06", "Anxiety"),
-    ("6B01", "Paniksttoerung", "Panic disorder", "06", "Anxiety"),
+    ("6B01", "Panikstoerung", "Panic disorder", "06", "Anxiety"),
     ("6B02", "Agoraphobie", "Agoraphobia", "06", "Anxiety"),
     ("6B03", "Spezifische Phobie", "Specific phobia", "06", "Anxiety"),
     ("6B04", "Soziale Angststoerung", "Social anxiety disorder", "06", "Anxiety"),
@@ -159,7 +158,7 @@ ICD11_PSYCHIATRIC = [
     # --- Stress-Related Disorders (6B40-6B4Z) ---
     ("6B40", "Posttraumatische Belastungsstoerung", "Post traumatic stress disorder", "06", "Stress-related"),
     ("6B41", "Komplexe Posttraumatische Belastungsstoerung", "Complex post traumatic stress disorder", "06", "Stress-related"),
-    ("6B42", "Anhaltendes Trauerstoerung", "Prolonged grief disorder", "06", "Stress-related"),
+    ("6B42", "Anhaltende Trauerstoerung", "Prolonged grief disorder", "06", "Stress-related"),
     ("6B43", "Anpassungsstoerung", "Adjustment disorder", "06", "Stress-related"),
     ("6B44", "Reaktive Bindungsstoerung", "Reactive attachment disorder", "06", "Stress-related"),
     ("6B45", "Enthemmte Bindungsstoerung", "Disinhibited social engagement disorder", "06", "Stress-related"),
@@ -200,6 +199,9 @@ ICD11_PSYCHIATRIC = [
     ("6C49", "Stoerungen durch Halluzinogengebrauch", "Disorders due to use of hallucinogens", "06", "Substance use"),
     ("6C4A", "Stoerungen durch Nikotingebrauch", "Disorders due to use of nicotine", "06", "Substance use"),
     ("6C4A.2", "Nikotinabhaengigkeit", "Nicotine dependence", "06", "Substance use"),
+
+    # --- Gambling Disorder ---
+    ("6C50", "Stoerung durch Gluecksspiel", "Gambling disorder", "06", "Impulse control"),
 
     # --- Impulse Control Disorders (6C70-6C7Z) ---
     ("6C70", "Pyromanie", "Pyromania", "06", "Impulse control"),
@@ -242,7 +244,7 @@ ICD11_PSYCHIATRIC = [
     ("6E61", "Sekundaeres Stimmungssyndrom", "Secondary mood syndrome", "06", "Secondary"),
     ("6E62", "Sekundaeres Angstsyndrom", "Secondary anxiety syndrome", "06", "Secondary"),
     ("6E63", "Sekundaeres Zwangssyndrom", "Secondary obsessive-compulsive syndrome", "06", "Secondary"),
-    ("6E64", "Sekundaeres dissozatives Syndrom", "Secondary dissociative syndrome", "06", "Secondary"),
+    ("6E64", "Sekundaeres dissoziatives Syndrom", "Secondary dissociative syndrome", "06", "Secondary"),
     ("6E65", "Sekundaeres Impulskontrollsyndrom", "Secondary impulse control syndrome", "06", "Secondary"),
     ("6E68", "Sekundaeres neurokognitives Syndrom", "Secondary neurocognitive syndrome", "06", "Secondary"),
 ]
@@ -289,6 +291,7 @@ ICD11_MEDICAL = [
     ("8A00", "Epilepsie", "Epilepsy", "08", "Neurological"),
     ("8A00.0", "Fokale Epilepsie", "Focal epilepsy", "08", "Neurological"),
     ("8A00.1", "Generalisierte Epilepsie", "Generalised epilepsy", "08", "Neurological"),
+    ("8A05.00", "Tourette-Syndrom", "Tourette syndrome", "08", "Neurological"),
     ("8A20", "Parkinson-Krankheit", "Parkinson disease", "08", "Neurological"),
     ("8A40", "Multiple Sklerose", "Multiple sclerosis", "08", "Neurological"),
     ("8A43", "Myasthenia gravis", "Myasthenia gravis", "08", "Neurological"),
@@ -384,7 +387,7 @@ DSM5_DATA = [
 
     # --- Anxiety Disorders ---
     ("F41.1", "Generalisierte Angststoerung", "Generalized anxiety disorder", "Anxiety"),
-    ("F41.0", "Paniksttoerung", "Panic disorder", "Anxiety"),
+    ("F41.0", "Panikstoerung", "Panic disorder", "Anxiety"),
     ("F40.00", "Agoraphobie", "Agoraphobia", "Anxiety"),
     ("F40.10", "Soziale Angststoerung (Soziale Phobie)", "Social anxiety disorder", "Anxiety"),
     ("F40.218", "Spezifische Phobie, Tier-Typ", "Specific phobia, animal type", "Anxiety"),
@@ -723,60 +726,67 @@ MAPPINGS = [
 # ===================================================================
 
 def build():
+    from datetime import date
+
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
         print(f"[INFO] Alte Datenbank geloescht: {DB_PATH}")
 
     conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
+    try:
+        cur = conn.cursor()
 
-    # Schema
-    cur.executescript(SCHEMA)
-    print("[OK] Schema erstellt")
+        # Schema
+        cur.executescript(SCHEMA)
+        print("[OK] Schema erstellt")
 
-    # ICD-11
-    all_icd11 = ICD11_PSYCHIATRIC + ICD11_SLEEP + ICD11_GENDER + ICD11_MEDICAL
-    cur.executemany(
-        "INSERT OR REPLACE INTO icd11 (code, title_de, title_en, chapter, block) VALUES (?,?,?,?,?)",
-        all_icd11
-    )
-    print(f"[OK] {len(all_icd11)} ICD-11-Codes eingefuegt")
+        # ICD-11
+        all_icd11 = ICD11_PSYCHIATRIC + ICD11_SLEEP + ICD11_GENDER + ICD11_MEDICAL
+        cur.executemany(
+            "INSERT OR REPLACE INTO icd11 (code, title_de, title_en, chapter, block) VALUES (?,?,?,?,?)",
+            all_icd11
+        )
+        print(f"[OK] {len(all_icd11)} ICD-11-Codes eingefuegt")
 
-    # DSM-5-TR
-    cur.executemany(
-        "INSERT OR REPLACE INTO dsm5 (icd10cm_code, title_de, title_en, dsm5_category) VALUES (?,?,?,?)",
-        DSM5_DATA
-    )
-    print(f"[OK] {len(DSM5_DATA)} DSM-5-TR-Codes eingefuegt")
+        # DSM-5-TR
+        cur.executemany(
+            "INSERT OR REPLACE INTO dsm5 (icd10cm_code, title_de, title_en, dsm5_category) VALUES (?,?,?,?)",
+            DSM5_DATA
+        )
+        print(f"[OK] {len(DSM5_DATA)} DSM-5-TR-Codes eingefuegt")
 
-    # ICF
-    cur.executemany(
-        "INSERT OR REPLACE INTO icf (code, title_de, title_en, component) VALUES (?,?,?,?)",
-        ICF_DATA
-    )
-    print(f"[OK] {len(ICF_DATA)} ICF-Codes eingefuegt")
+        # ICF
+        cur.executemany(
+            "INSERT OR REPLACE INTO icf (code, title_de, title_en, component) VALUES (?,?,?,?)",
+            ICF_DATA
+        )
+        print(f"[OK] {len(ICF_DATA)} ICF-Codes eingefuegt")
 
-    # Cross-Mapping
-    cur.executemany(
-        "INSERT INTO code_mapping (source_system, source_code, target_system, target_code, mapping_quality) VALUES (?,?,?,?,?)",
-        MAPPINGS
-    )
-    print(f"[OK] {len(MAPPINGS)} Cross-Mappings eingefuegt")
+        # Cross-Mapping
+        cur.executemany(
+            "INSERT INTO code_mapping (source_system, source_code, target_system, target_code, mapping_quality) VALUES (?,?,?,?,?)",
+            MAPPINGS
+        )
+        print(f"[OK] {len(MAPPINGS)} Cross-Mappings eingefuegt")
 
-    # Metadata
-    from datetime import date
-    cur.executemany("INSERT OR REPLACE INTO metadata (key, value) VALUES (?,?)", [
-        ("version", "1.0"),
-        ("build_date", str(date.today())),
-        ("scope", "psychiatry_focus"),
-        ("icd11_count", str(len(all_icd11))),
-        ("dsm5_count", str(len(DSM5_DATA))),
-        ("icf_count", str(len(ICF_DATA))),
-        ("mapping_count", str(len(MAPPINGS))),
-    ])
+        # Metadata
+        cur.executemany("INSERT OR REPLACE INTO metadata (key, value) VALUES (?,?)", [
+            ("version", "1.0"),
+            ("build_date", str(date.today())),
+            ("scope", "psychiatry_focus"),
+            ("icd11_count", str(len(all_icd11))),
+            ("dsm5_count", str(len(DSM5_DATA))),
+            ("icf_count", str(len(ICF_DATA))),
+            ("mapping_count", str(len(MAPPINGS))),
+        ])
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"[ERROR] Datenbankaufbau fehlgeschlagen: {e}")
+        raise
+    finally:
+        conn.close()
 
     size_kb = os.path.getsize(DB_PATH) / 1024
     total = len(all_icd11) + len(DSM5_DATA) + len(ICF_DATA)

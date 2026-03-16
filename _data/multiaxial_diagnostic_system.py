@@ -33,8 +33,6 @@ import math
 import os
 from dataclasses import dataclass, field, asdict
 from typing import Optional
-from enum import Enum
-
 try:
     from transitions.extensions import HierarchicalMachine
     HAS_TRANSITIONS = True
@@ -70,28 +68,37 @@ _CODE_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diagno
 HAS_CODE_DB = os.path.exists(_CODE_DB_PATH)
 
 
+_VALID_TITLE_COLS = {"title_de", "title_en"}
+
+
 @st.cache_data(ttl=3600)
 def _load_code_options(system: str, lang: str = "de") -> list:
     """Load all codes from a system as 'CODE - Title' strings for selectbox."""
     if not HAS_CODE_DB:
         return []
     title_col = "title_de" if lang == "de" else "title_en"
-    conn = sqlite3.connect(_CODE_DB_PATH)
-    if system == "icd11":
-        rows = conn.execute(
-            f"SELECT code, {title_col} FROM icd11 ORDER BY code"
-        ).fetchall()
-    elif system == "dsm5":
-        rows = conn.execute(
-            f"SELECT icd10cm_code, {title_col} FROM dsm5 ORDER BY icd10cm_code"
-        ).fetchall()
-    elif system == "icf":
-        rows = conn.execute(
-            f"SELECT code, {title_col} FROM icf ORDER BY code"
-        ).fetchall()
-    else:
+    if title_col not in _VALID_TITLE_COLS:
+        return []
+    try:
+        conn = sqlite3.connect(_CODE_DB_PATH)
+        if system == "icd11":
+            rows = conn.execute(
+                f"SELECT code, {title_col} FROM icd11 ORDER BY code"
+            ).fetchall()
+        elif system == "dsm5":
+            rows = conn.execute(
+                f"SELECT icd10cm_code, {title_col} FROM dsm5 ORDER BY icd10cm_code"
+            ).fetchall()
+        elif system == "icf":
+            rows = conn.execute(
+                f"SELECT code, {title_col} FROM icf ORDER BY code"
+            ).fetchall()
+        else:
+            rows = []
+    except Exception:
         rows = []
-    conn.close()
+    finally:
+        conn.close()
     return [f"{code} - {title}" for code, title in rows]
 
 
@@ -110,19 +117,29 @@ def _load_icd11_options_by_chapter(chapter: str, lang: str = "de") -> list:
     return [f"{code} - {title}" for code, title in rows]
 
 
-def get_cross_mapped_code(source_system: str, source_code: str, target_system: str) -> str:
-    """Look up cross-mapped code between systems."""
+def get_cross_mapped_code(from_system: str, from_code: str, to_system: str) -> str:
+    """Look up cross-mapped code between systems.
+
+    Tries forward lookup first (from_system -> to_system),
+    then reverse lookup (maybe stored as to_system -> from_system in DB).
+    """
     if not HAS_CODE_DB:
         return ""
     conn = sqlite3.connect(_CODE_DB_PATH)
+    # Forward: from_system/from_code -> to_system
     row = conn.execute(
-        "SELECT target_code FROM code_mapping WHERE source_system=? AND source_code=? AND target_system=? LIMIT 1",
-        (source_system, source_code, target_system)
+        "SELECT target_code FROM code_mapping "
+        "WHERE source_system=? AND source_code=? AND target_system=? LIMIT 1",
+        (from_system, from_code, to_system)
     ).fetchone()
     if not row:
+        # Reverse: maybe stored as to_system -> from_system in DB
+        # So from_system is the DB's target_system, from_code is the DB's target_code,
+        # and to_system is the DB's source_system. We return the DB's source_code.
         row = conn.execute(
-            "SELECT source_code FROM code_mapping WHERE target_system=? AND target_code=? AND source_system=? LIMIT 1",
-            (source_system, source_code, target_system)
+            "SELECT source_code FROM code_mapping "
+            "WHERE target_system=? AND target_code=? AND source_system=? LIMIT 1",
+            (from_system, from_code, to_system)
         ).fetchone()
     conn.close()
     return row[0] if row else ""
@@ -177,15 +194,6 @@ def t(key: str) -> str:
 # DATENMODELLE (Pydantic-artig mit dataclasses)
 # ===================================================================
 
-class DiagnosticStatus(Enum):
-    ACUTE = "akut"
-    CHRONIC = "chronisch"
-    REMITTED = "remittiert"
-    SUSPECTED = "Verdacht"
-    EXCLUDED = "ausgeschlossen"
-    REFUTED = "widerlegt"
-
-
 @dataclass
 class Diagnosis:
     code_icd11: str = ""
@@ -202,18 +210,6 @@ class Diagnosis:
     severity: str = ""
     evidence_pro: str = ""
     evidence_contra: str = ""
-
-
-@dataclass
-class TreatmentEntry:
-    type: str = ""  # Medikation, Psychotherapie, etc.
-    name: str = ""
-    start_date: str = ""
-    end_date: str = ""
-    effect: str = ""
-    side_effects: str = ""
-    compliance_self: int = 5
-    compliance_external: int = 5
 
 
 @dataclass
@@ -397,6 +393,11 @@ class ConditionModel:
 
 @dataclass
 class PatientData:
+    # Intake-Daten (Gate 0)
+    patient_name: str = ""
+    patient_dob: str = ""
+    presenting_complaint: str = ""
+
     # Achse I: Psychische Profile
     diagnoses_acute: list = field(default_factory=list)
     diagnoses_chronic: list = field(default_factory=list)
@@ -404,6 +405,8 @@ class PatientData:
     diagnoses_suspected: list = field(default_factory=list)
     diagnoses_excluded: list = field(default_factory=list)
     treatment_history: list = field(default_factory=list)
+    treatment_current: str = ""
+    treatment_past: str = ""
     compliance_med_self: int = 5
     compliance_med_ext: int = 5
     compliance_therapy: int = 5
@@ -782,6 +785,35 @@ if 'current_gate' not in st.session_state:
 if 'lang' not in st.session_state:
     st.session_state.lang = "de"
 
+# Auto-load session on first start (BEFORE page render)
+if 'session_autoloaded' not in st.session_state:
+    _auto_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "diagnostic_session.json")
+    if os.path.exists(_auto_path):
+        try:
+            with open(_auto_path, "r", encoding="utf-8") as _f_auto:
+                _auto_data = json.load(_f_auto)
+            _pd_dict = _auto_data.get("patient", {})
+            if "pid5_profile" in _pd_dict:
+                _pd_dict["pid5_profile"] = PID5Profile(**_pd_dict["pid5_profile"])
+            if "hitop_profile" in _pd_dict:
+                _pd_dict["hitop_profile"] = HiTOPProfile(**_pd_dict["hitop_profile"])
+            if "functioning" in _pd_dict:
+                _pd_dict["functioning"] = FunctioningAssessment(**_pd_dict["functioning"])
+            if "condition_model" in _pd_dict:
+                _pd_dict["condition_model"] = ConditionModel(**_pd_dict["condition_model"])
+            if "pathophysiological_model" in _pd_dict:
+                _pd_dict["pathophysiological_model"] = PathophysiologicalModel(
+                    **_pd_dict["pathophysiological_model"])
+            _valid_fields = {f.name for f in PatientData.__dataclass_fields__.values()}
+            _filtered = {k: v for k, v in _pd_dict.items() if k in _valid_fields}
+            st.session_state.patient = PatientData(**_filtered)
+            st.session_state.current_gate = _auto_data.get("current_gate", 0)
+            st.session_state.lang = _auto_data.get("lang", "de")
+        except Exception:
+            pass  # Silently fall back to empty session
+    st.session_state.session_autoloaded = True
+
 
 def get_patient() -> PatientData:
     return st.session_state.patient
@@ -855,13 +887,19 @@ if menu == t("nav_gatekeeper"):
     # --- Stufe 0: Intake ---
     if current == 0:
         st.subheader(t("intake_subheader"))
+        p = get_patient()
         with st.form("intake_form"):
             col1, col2 = st.columns(2)
-            col1.text_input(t("intake_name"), key="intake_name")
-            col2.date_input(t("intake_dob"), key="intake_dob",
+            intake_name = col1.text_input(t("intake_name"),
+                                          value=p.patient_name, key="intake_name")
+            intake_dob = col2.date_input(t("intake_dob"), key="intake_dob",
                             value=datetime.date(1990, 1, 1))
-            st.text_area(t("intake_reason"), key="intake_reason")
+            intake_reason = st.text_area(t("intake_reason"),
+                                         value=p.presenting_complaint, key="intake_reason")
             if st.form_submit_button(t("intake_submit")):
+                p.patient_name = intake_name
+                p.patient_dob = str(intake_dob)
+                p.presenting_complaint = intake_reason
                 st.session_state.current_gate = 1
                 st.rerun()
 
@@ -1181,9 +1219,12 @@ if menu == t("nav_gatekeeper"):
 
         st.markdown("---")
         st.write(f"**{t('gate6_stressors_label')}**")
+        _g6_stressor_opts = get_stressors()
+        _g6_valid_defaults = [s for s in p.functioning.psychosocial_stressors if s in _g6_stressor_opts]
         stressors = st.multiselect(
             t("gate6_stressors_select"),
-            get_stressors()
+            _g6_stressor_opts,
+            default=_g6_valid_defaults
         )
         p.functioning.psychosocial_stressors = stressors
 
@@ -1221,7 +1262,7 @@ elif menu == t("nav_axis1"):
         st.subheader(t("ax1_diag_subheader"))
         st.write(f"**{t('ax1_diag_current')}**")
         for d in p.diagnoses_acute:
-            st.success(f"🔴 {t('ax1_acute_prefix')}: {d['name']} ({d.get('code_icd11','')}/{d.get('code_dsm5','')})")
+            st.error(f"🔴 {t('ax1_acute_prefix')}: {d['name']} ({d.get('code_icd11','')}/{d.get('code_dsm5','')})")
         for d in p.diagnoses_chronic:
             st.info(f"🟡 {t('ax1_chronic_prefix')}: {d['name']} ({d.get('code_icd11','')}/{d.get('code_dsm5','')})")
 
@@ -1266,10 +1307,14 @@ elif menu == t("nav_axis1"):
         col1, col2 = st.columns(2)
         with col1:
             st.write(f"**{t('ax1_treat_current')}**")
-            st.text_area(t("ax1_treat_current_area"), key="curr_treat_ax1")
+            p.treatment_current = st.text_area(
+                t("ax1_treat_current_area"), value=p.treatment_current,
+                key="curr_treat_ax1")
         with col2:
             st.write(f"**{t('ax1_treat_past')}**")
-            st.text_area(t("ax1_treat_past_area"), key="past_treat_ax1")
+            p.treatment_past = st.text_area(
+                t("ax1_treat_past_area"), value=p.treatment_past,
+                key="past_treat_ax1")
 
         st.subheader(t("ax1_compliance_subheader"))
         c1, c2, c3 = st.columns(3)
@@ -1582,11 +1627,12 @@ elif menu == t("nav_axis3"):
                     mc_dsm = get_cross_mapped_code("icd11", mc_code, "dsm5")
                 if not mc_name.strip() and mc_code:
                     mc_name = get_code_title("icd11", mc_code, _lang)
-                p.med_diagnoses_acute.append(asdict(MedicalCondition(
-                    name=mc_name, icd11_code=mc_code, dsm5_code=mc_dsm,
-                    status="akut", evidence=mc_evidence
-                )))
-                st.rerun()
+                if mc_name.strip() or mc_code:
+                    p.med_diagnoses_acute.append(asdict(MedicalCondition(
+                        name=mc_name, icd11_code=mc_code, dsm5_code=mc_dsm,
+                        status="akut", evidence=mc_evidence
+                    )))
+                    st.rerun()
         for d in p.med_diagnoses_acute:
             st.error(f"🔴 {d['name']} ({d.get('icd11_code','')}/{d.get('dsm5_code','')})")
 
@@ -1622,12 +1668,13 @@ elif menu == t("nav_axis3"):
                     mc_dsm = get_cross_mapped_code("icd11", mc_code, "dsm5")
                 if not mc_name.strip() and mc_code:
                     mc_name = get_code_title("icd11", mc_code, _lang)
-                p.med_diagnoses_chronic.append(asdict(MedicalCondition(
-                    name=mc_name, icd11_code=mc_code, dsm5_code=mc_dsm,
-                    status="chronisch", causality=mc_causality,
-                    evidence=mc_evidence
-                )))
-                st.rerun()
+                if mc_name.strip() or mc_code:
+                    p.med_diagnoses_chronic.append(asdict(MedicalCondition(
+                        name=mc_name, icd11_code=mc_code, dsm5_code=mc_dsm,
+                        status="chronisch", causality=mc_causality,
+                        evidence=mc_evidence
+                    )))
+                    st.rerun()
         for d in p.med_diagnoses_chronic:
             st.warning(f"🟡 {d['name']} ({d.get('icd11_code','')}) [{d.get('causality','')}]")
 
@@ -1647,12 +1694,13 @@ elif menu == t("nav_axis3"):
                 mc_code = _extract_code(mc_code_sel) if mc_code_sel else mc_code_man.strip()
                 if not mc_name.strip() and mc_code:
                     mc_name = get_code_title("icd11", mc_code, _lang)
-                p.med_diagnoses_contributing.append(asdict(MedicalCondition(
-                    name=mc_name, icd11_code=mc_code,
-                    status="aktiv", causality="beitragend",
-                    evidence=mc_evidence
-                )))
-                st.rerun()
+                if mc_name.strip() or mc_code:
+                    p.med_diagnoses_contributing.append(asdict(MedicalCondition(
+                        name=mc_name, icd11_code=mc_code,
+                        status="aktiv", causality="beitragend",
+                        evidence=mc_evidence
+                    )))
+                    st.rerun()
         for d in p.med_diagnoses_contributing:
             st.info(f"◐ {d['name']} ({d.get('icd11_code','')})")
 
@@ -1733,11 +1781,12 @@ elif menu == t("nav_axis3"):
                 ms_code = _extract_code(ms_code_sel) if ms_code_sel else ms_code_man.strip()
                 if not ms_name.strip() and ms_code:
                     ms_name = get_code_title("icd11", ms_code, _lang)
-                p.med_diagnoses_suspected.append(asdict(MedicalCondition(
-                    name=ms_name, icd11_code=ms_code,
-                    status="Verdacht", evidence=ms_evidence
-                )))
-                st.rerun()
+                if ms_name.strip() or ms_code:
+                    p.med_diagnoses_suspected.append(asdict(MedicalCondition(
+                        name=ms_name, icd11_code=ms_code,
+                        status="Verdacht", evidence=ms_evidence
+                    )))
+                    st.rerun()
         for d in p.med_diagnoses_suspected:
             st.markdown(
                 f"<div class='status-alert suspected'>? {t('ax3_med_suspected_prefix')}: "
@@ -1852,10 +1901,12 @@ elif menu == t("nav_axis4"):
     p = get_patient()
 
     st.subheader(t("ax4_stressors_subheader"))
+    _stressor_options = get_stressors()
+    _valid_defaults = [s for s in p.functioning.psychosocial_stressors if s in _stressor_options]
     stressors = st.multiselect(
         t("ax4_stressors_select"),
-        get_stressors(),
-        default=p.functioning.psychosocial_stressors
+        _stressor_options,
+        default=_valid_defaults
     )
     p.functioning.psychosocial_stressors = stressors
 
@@ -2281,7 +2332,7 @@ elif menu == t("nav_synopsis"):
 
     # --- HiTOP-Spektren ---
     if p.crosscutting_level1:
-        st.markdown("<div class='axis-header'>HiTOP-SPEKTREN</div>",
+        st.markdown(f"<div class='axis-header'>{t('hitop_title')}</div>",
                     unsafe_allow_html=True)
         render_hitop_radar(p.hitop_profile)
 
@@ -2322,17 +2373,18 @@ elif menu == t("nav_synopsis"):
     if p.contact_persons:
         st.write(f"**{t('ax4_contacts_subheader')}**")
         if HAS_PANDAS:
-            df_cp = pd.DataFrame(p.contact_persons)[
-                ["name", "role", "institution", "phone"]]
-            st.table(df_cp)
+            df_cp = pd.DataFrame(p.contact_persons)
+            _cp_cols = [c for c in ["name", "role", "institution", "phone"] if c in df_cp.columns]
+            st.table(df_cp[_cp_cols] if _cp_cols else df_cp)
         else:
             for cp in p.contact_persons:
                 st.write(f"- {cp.get('name','')} ({cp.get('role','')})")
     if p.icf_codes:
         st.write(f"**{t('ax4_icf_subheader')}**")
         if HAS_PANDAS:
-            df_icf = pd.DataFrame(p.icf_codes)[["code", "title", "qualifier_label"]]
-            st.table(df_icf)
+            df_icf = pd.DataFrame(p.icf_codes)
+            _icf_cols = [c for c in ["code", "title", "qualifier_label"] if c in df_icf.columns]
+            st.table(df_icf[_icf_cols] if _icf_cols else df_icf)
         else:
             for ic in p.icf_codes:
                 st.write(f"- {ic['code']} {ic.get('title','')} [{ic.get('qualifier_label','')}]")
@@ -2342,10 +2394,10 @@ elif menu == t("nav_synopsis"):
         st.markdown(f"<div class='axis-header'>{t('syn_therapy_resist_header')}</div>",
                     unsafe_allow_html=True)
         if HAS_PANDAS:
-            df_tr = pd.DataFrame(p.treatment_attempts)[
-                ["treatment", "treatment_type", "start_date", "end_date",
-                 "response", "reason_stopped"]]
-            st.table(df_tr)
+            df_tr = pd.DataFrame(p.treatment_attempts)
+            _tr_cols = [c for c in ["treatment", "treatment_type", "start_date", "end_date",
+                         "response", "reason_stopped"] if c in df_tr.columns]
+            st.table(df_tr[_tr_cols] if _tr_cols else df_tr)
         else:
             for ta in p.treatment_attempts:
                 st.write(f"- {ta.get('treatment','')} ({ta.get('treatment_type','')}) "
@@ -2357,9 +2409,10 @@ elif menu == t("nav_synopsis"):
         st.markdown(f"<div class='axis-header'>{t('syn_cgi_header')}</div>",
                     unsafe_allow_html=True)
         if HAS_PANDAS:
-            df_cgi = pd.DataFrame(p.cgi_assessments)[
-                ["date", "cgi_s", "cgi_i", "therapeutic_effect", "side_effects", "notes"]]
-            st.table(df_cgi)
+            df_cgi = pd.DataFrame(p.cgi_assessments)
+            _cgi_cols = [c for c in ["date", "cgi_s", "cgi_i", "therapeutic_effect",
+                          "side_effects", "notes"] if c in df_cgi.columns]
+            st.table(df_cgi[_cgi_cols] if _cgi_cols else df_cgi)
         else:
             for ca in p.cgi_assessments:
                 st.write(f"- [{ca.get('date','')}] CGI-S: {ca.get('cgi_s',0)}, "
@@ -2448,9 +2501,10 @@ elif menu == t("nav_synopsis"):
     if p.contact_log:
         st.write(f"**{t('ax6_contact_log_subheader')}**")
         if HAS_PANDAS:
-            df_cl = pd.DataFrame(p.contact_log)[
-                ["date", "contact_type", "contact_person", "content", "axis_ref"]]
-            st.table(df_cl)
+            df_cl = pd.DataFrame(p.contact_log)
+            _cl_cols = [c for c in ["date", "contact_type", "contact_person",
+                         "content", "axis_ref"] if c in df_cl.columns]
+            st.table(df_cl[_cl_cols] if _cl_cols else df_cl)
         else:
             for cl in p.contact_log:
                 st.write(f"- [{cl.get('date','')}] {cl.get('contact_type','')}: "
@@ -2613,6 +2667,14 @@ def _save_session(filename: str):
     return filepath
 
 
+def _auto_save():
+    """Auto-save session to default file (called on significant state changes)."""
+    try:
+        _save_session("diagnostic_session.json")
+    except Exception:
+        pass  # Auto-save failure is non-critical
+
+
 def _load_session(filepath: str) -> bool:
     """Load PatientData from JSON file."""
     try:
@@ -2636,8 +2698,10 @@ def _load_session(filepath: str) -> bool:
         filtered = {k: v for k, v in pd_dict.items() if k in valid_fields}
         st.session_state.patient = PatientData(**filtered)
         st.session_state.current_gate = data.get("current_gate", 0)
+        st.session_state.lang = data.get("lang", "de")
         return True
-    except Exception:
+    except Exception as e:
+        st.sidebar.warning(f"Session load error: {e}")
         return False
 
 
@@ -2667,12 +2731,7 @@ if col_load.button(t("session_load"), key="btn_load"):
     else:
         st.sidebar.error(t("session_load_error"))
 
-# Auto-load on first start if session file exists
-if 'session_autoloaded' not in st.session_state:
-    _auto_path = os.path.join(_SESSION_DIR, "diagnostic_session.json")
-    if os.path.exists(_auto_path):
-        _load_session(_auto_path)
-    st.session_state.session_autoloaded = True
+# Auto-load moved to top of file (before page render) for immediate display
 
 
 # ===================================================================
@@ -2687,3 +2746,6 @@ st.sidebar.caption(
     f"{t('footer_line3')}\n\n"
     f"{t('footer_date_prefix')}: {datetime.date.today()}"
 )
+
+# Auto-save on every interaction (V10 feature)
+_auto_save()
