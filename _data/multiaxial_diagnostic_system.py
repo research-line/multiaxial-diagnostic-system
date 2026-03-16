@@ -79,6 +79,7 @@ def _load_code_options(system: str, lang: str = "de") -> list:
     title_col = "title_de" if lang == "de" else "title_en"
     if title_col not in _VALID_TITLE_COLS:
         return []
+    conn = None
     try:
         conn = sqlite3.connect(_CODE_DB_PATH)
         if system == "icd11":
@@ -98,7 +99,8 @@ def _load_code_options(system: str, lang: str = "de") -> list:
     except Exception:
         rows = []
     finally:
-        conn.close()
+        if conn:
+            conn.close()
     return [f"{code} - {title}" for code, title in rows]
 
 
@@ -108,12 +110,20 @@ def _load_icd11_options_by_chapter(chapter: str, lang: str = "de") -> list:
     if not HAS_CODE_DB:
         return []
     title_col = "title_de" if lang == "de" else "title_en"
-    conn = sqlite3.connect(_CODE_DB_PATH)
-    rows = conn.execute(
-        f"SELECT code, {title_col} FROM icd11 WHERE chapter = ? ORDER BY code",
-        (chapter,)
-    ).fetchall()
-    conn.close()
+    if title_col not in _VALID_TITLE_COLS:
+        return []
+    conn = None
+    try:
+        conn = sqlite3.connect(_CODE_DB_PATH)
+        rows = conn.execute(
+            f"SELECT code, {title_col} FROM icd11 WHERE chapter = ? ORDER BY code",
+            (chapter,)
+        ).fetchall()
+    except Exception:
+        rows = []
+    finally:
+        if conn:
+            conn.close()
     return [f"{code} - {title}" for code, title in rows]
 
 
@@ -125,24 +135,30 @@ def get_cross_mapped_code(from_system: str, from_code: str, to_system: str) -> s
     """
     if not HAS_CODE_DB:
         return ""
-    conn = sqlite3.connect(_CODE_DB_PATH)
-    # Forward: from_system/from_code -> to_system
-    row = conn.execute(
-        "SELECT target_code FROM code_mapping "
-        "WHERE source_system=? AND source_code=? AND target_system=? LIMIT 1",
-        (from_system, from_code, to_system)
-    ).fetchone()
-    if not row:
-        # Reverse: maybe stored as to_system -> from_system in DB
-        # So from_system is the DB's target_system, from_code is the DB's target_code,
-        # and to_system is the DB's source_system. We return the DB's source_code.
+    conn = None
+    try:
+        conn = sqlite3.connect(_CODE_DB_PATH)
+        # Forward: from_system/from_code -> to_system
         row = conn.execute(
-            "SELECT source_code FROM code_mapping "
-            "WHERE target_system=? AND target_code=? AND source_system=? LIMIT 1",
+            "SELECT target_code FROM code_mapping "
+            "WHERE source_system=? AND source_code=? AND target_system=? LIMIT 1",
             (from_system, from_code, to_system)
         ).fetchone()
-    conn.close()
-    return row[0] if row else ""
+        if not row:
+            # Reverse: maybe stored as to_system -> from_system in DB
+            # So from_system is the DB's target_system, from_code is the DB's target_code,
+            # and to_system is the DB's source_system. We return the DB's source_code.
+            row = conn.execute(
+                "SELECT source_code FROM code_mapping "
+                "WHERE target_system=? AND target_code=? AND source_system=? LIMIT 1",
+                (from_system, from_code, to_system)
+            ).fetchone()
+        return row[0] if row else ""
+    except Exception:
+        return ""
+    finally:
+        if conn:
+            conn.close()
 
 
 def get_code_title(system: str, code: str, lang: str = "de") -> str:
@@ -150,17 +166,25 @@ def get_code_title(system: str, code: str, lang: str = "de") -> str:
     if not HAS_CODE_DB:
         return ""
     title_col = "title_de" if lang == "de" else "title_en"
-    conn = sqlite3.connect(_CODE_DB_PATH)
-    if system == "icd11":
-        row = conn.execute(f"SELECT {title_col} FROM icd11 WHERE code=?", (code,)).fetchone()
-    elif system == "dsm5":
-        row = conn.execute(f"SELECT {title_col} FROM dsm5 WHERE icd10cm_code=?", (code,)).fetchone()
-    elif system == "icf":
-        row = conn.execute(f"SELECT {title_col} FROM icf WHERE code=?", (code,)).fetchone()
-    else:
-        row = None
-    conn.close()
-    return row[0] if row else ""
+    if title_col not in _VALID_TITLE_COLS:
+        return ""
+    conn = None
+    try:
+        conn = sqlite3.connect(_CODE_DB_PATH)
+        if system == "icd11":
+            row = conn.execute(f"SELECT {title_col} FROM icd11 WHERE code=?", (code,)).fetchone()
+        elif system == "dsm5":
+            row = conn.execute(f"SELECT {title_col} FROM dsm5 WHERE icd10cm_code=?", (code,)).fetchone()
+        elif system == "icf":
+            row = conn.execute(f"SELECT {title_col} FROM icf WHERE code=?", (code,)).fetchone()
+        else:
+            row = None
+        return row[0] if row else ""
+    except Exception:
+        return ""
+    finally:
+        if conn:
+            conn.close()
 
 
 def _extract_code(option: str) -> str:

@@ -38,6 +38,7 @@ _ul/
 
 # Internal project management (not for public repo)
 Plan.txt
+AUFGABEN.txt
 _archive/
 _partners/
 *_submission/
@@ -48,6 +49,9 @@ LINKEDIN.txt
 PUBLICATION_STRATEGY.txt
 ZENODO.txt
 REVIEW.txt
+
+# Session data (may contain patient information)
+diagnostic_session.json
 
 # Artifacts from other tools
 compass_artifact_*.md
