@@ -1304,6 +1304,79 @@ elif menu == t("nav_axis1"):
                 unsafe_allow_html=True
             )
 
+        # --- Diagnose hinzufügen (auch nach Gatekeeper-Abschluss) ---
+        st.markdown("---")
+        with st.form("ax1_add_diag_form"):
+            ax1_diag_name = st.text_input(t("gate5_diag_name"), key="ax1_diag_name")
+            _lang = st.session_state.get("lang", "de")
+            col1, col2 = st.columns(2)
+            if HAS_CODE_DB:
+                _ax1_icd11_opts = [""] + _load_code_options("icd11", _lang)
+                _ax1_dsm5_opts = [""] + _load_code_options("dsm5", _lang)
+                ax1_icd11_sel = col1.selectbox(
+                    t("gate5_icd11_code"), _ax1_icd11_opts, key="ax1_icd11")
+                ax1_dsm5_sel = col2.selectbox(
+                    t("gate5_dsm5_code"), _ax1_dsm5_opts, key="ax1_dsm5")
+                col_m1, col_m2 = st.columns(2)
+                ax1_icd11_manual = col_m1.text_input(
+                    t("code_manual_icd11"), key="ax1_icd11_man")
+                ax1_dsm5_manual = col_m2.text_input(
+                    t("code_manual_dsm5"), key="ax1_dsm5_man")
+            else:
+                ax1_icd11_sel = ""
+                ax1_dsm5_sel = ""
+                ax1_icd11_manual = col1.text_input(t("gate5_icd11_code"), key="ax1_icd11_man_nb")
+                ax1_dsm5_manual = col2.text_input(t("gate5_dsm5_code"), key="ax1_dsm5_man_nb")
+            ax1_status_options = [t("gate5_status_acute"), t("gate5_status_chronic"),
+                                  t("gate5_status_suspected"), t("gate5_status_excluded")]
+            ax1_diag_status = st.selectbox(t("gate5_status"), ax1_status_options, key="ax1_status")
+
+            col_c, col_s = st.columns(2)
+            ax1_confidence = col_c.slider(
+                t("diag_confidence"), 0, 100, 50, key="ax1_confidence",
+                help=t("diag_confidence_help"))
+            ax1_severity_options = [t("diag_severity_low"), t("diag_severity_medium"),
+                                    t("diag_severity_high"), t("diag_severity_very_high")]
+            ax1_severity = col_s.selectbox(t("diag_severity"), ax1_severity_options, key="ax1_severity")
+
+            ax1_evidence = st.text_area(t("gate5_evidence"), key="ax1_evidence")
+
+            col_pro, col_con = st.columns(2)
+            ax1_pro = col_pro.text_area(t("diag_pro_evidence"), height=80, key="ax1_pro")
+            ax1_contra = col_con.text_area(t("diag_contra_evidence"), height=80, key="ax1_contra")
+
+            if st.form_submit_button(t("gate5_add_diag")):
+                ax1_icd11 = _extract_code(ax1_icd11_sel) if ax1_icd11_sel else ax1_icd11_manual.strip()
+                ax1_dsm5 = _extract_code(ax1_dsm5_sel) if ax1_dsm5_sel else ax1_dsm5_manual.strip()
+                if ax1_dsm5 and not ax1_icd11:
+                    ax1_icd11 = get_cross_mapped_code("dsm5", ax1_dsm5, "icd11")
+                elif ax1_icd11 and not ax1_dsm5:
+                    ax1_dsm5 = get_cross_mapped_code("icd11", ax1_icd11, "dsm5")
+                if not ax1_diag_name.strip() and ax1_icd11:
+                    ax1_diag_name = get_code_title("icd11", ax1_icd11, _lang)
+                elif not ax1_diag_name.strip() and ax1_dsm5:
+                    ax1_diag_name = get_code_title("dsm5", ax1_dsm5, _lang)
+                ax1_diag = Diagnosis(
+                    code_icd11=ax1_icd11,
+                    code_dsm5=ax1_dsm5,
+                    name=ax1_diag_name,
+                    status=ax1_diag_status.lower(),
+                    evidence=ax1_evidence,
+                    confidence_pct=ax1_confidence,
+                    severity=ax1_severity,
+                    evidence_pro=ax1_pro,
+                    evidence_contra=ax1_contra
+                )
+                if ax1_diag_status == t("gate5_status_acute"):
+                    p.diagnoses_acute.append(asdict(ax1_diag))
+                elif ax1_diag_status == t("gate5_status_chronic"):
+                    p.diagnoses_chronic.append(asdict(ax1_diag))
+                elif ax1_diag_status == t("gate5_status_suspected"):
+                    p.diagnoses_suspected.append(asdict(ax1_diag))
+                elif ax1_diag_status == t("gate5_status_excluded"):
+                    p.diagnoses_excluded.append(asdict(ax1_diag))
+                st.rerun()
+
     with tab_rem:
         st.subheader(t("ax1_rem_subheader"))
         with st.form("remission_form"):
