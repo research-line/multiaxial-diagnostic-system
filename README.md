@@ -208,7 +208,9 @@ If you use this system in your research, please cite:
 
 ## License
 
-CC-BY 4.0. See [LICENSE](LICENSE) for details.
+- **Software** (code, templates, scoring engine): [MIT License](LICENSE)
+- **Scientific papers** (`paper/`): [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Test instruments** (`_data/testcenter/tests/`): Each instrument under its original license (Public Domain, WHO, APA, etc.) -- see [`_data/testcenter/NOTICE.md`](_data/testcenter/NOTICE.md)
 
 ## Author
 
