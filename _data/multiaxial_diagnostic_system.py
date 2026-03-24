@@ -1140,6 +1140,128 @@ if menu == t("nav_gatekeeper"):
         else:
             st.success(t("gate5_no_trigger"))
 
+        # --- Testcenter-Ergebnisse importieren ---
+        st.markdown("---")
+        _imp_label = ("Import Testcenter Results" if _lang == "en"
+                      else "Testcenter-Ergebnisse importieren")
+        with st.expander(_imp_label):
+            _imp_help = (
+                "Enter a session token or battery ID from the Testcenter to import scores."
+                if _lang == "en" else
+                "Geben Sie einen Sitzungs-Token oder Paket-ID aus dem Testcenter ein, "
+                "um Ergebnisse zu importieren."
+            )
+            st.caption(_imp_help)
+            _imp_token = st.text_input(
+                "Token / Battery-ID",
+                key="tc_import_token",
+                placeholder="z.B. a8f3b21c-6f0"
+            )
+            if st.button(
+                "Import" if _lang == "en" else "Importieren",
+                key="tc_import_btn"
+            ):
+                if _imp_token:
+                    import urllib.request
+                    _imported = []
+                    _errors = []
+
+                    # Try as single session first
+                    _urls = [
+                        f"{_TESTCENTER_URL}/api/results/{_imp_token}",
+                    ]
+
+                    for _url in _urls:
+                        try:
+                            _req = urllib.request.urlopen(_url, timeout=5)
+                            _data = json.loads(_req.read().decode("utf-8"))
+
+                            if _data.get("status") == "completed" and _data.get("scores"):
+                                _tid = _data["test_id"]
+                                _scores = _data["scores"]
+                                p.screening_results[_tid] = {
+                                    "token": _data.get("token", _imp_token),
+                                    "test_id": _tid,
+                                    "test_name": _scores.get("test_name", {}),
+                                    "total_score": _scores.get("total_score"),
+                                    "max_score": _scores.get("max_score"),
+                                    "severity": _scores.get("severity"),
+                                    "label": _scores.get("label", {}),
+                                    "color": _scores.get("color"),
+                                    "subscales": _scores.get("subscales", []),
+                                    "alerts": _scores.get("alerts", []),
+                                    "imported_at": datetime.datetime.now().isoformat(),
+                                }
+                                _imported.append(_tid)
+                            elif _data.get("status") == "pending":
+                                _errors.append(
+                                    f"Token {_imp_token}: "
+                                    + ("not yet completed" if _lang == "en"
+                                       else "noch nicht abgeschlossen")
+                                )
+                            break  # Single session found
+                        except Exception:
+                            pass  # Try next URL or battery
+
+                    # If single session didn't work, try as battery
+                    if not _imported and not _errors:
+                        try:
+                            _bat_url = f"{_TESTCENTER_URL}/api/batteries/{_imp_token}"
+                            _req = urllib.request.urlopen(_bat_url, timeout=5)
+                            _bat_data = json.loads(_req.read().decode("utf-8"))
+                            # Battery API might not exist yet, fallback:
+                        except Exception:
+                            pass
+
+                    # If still nothing, try listing sessions by scanning
+                    if not _imported and not _errors:
+                        _errors.append(
+                            f"Token '{_imp_token}': "
+                            + ("not found or Testcenter not reachable"
+                               if _lang == "en"
+                               else "nicht gefunden oder Testcenter nicht erreichbar")
+                        )
+
+                    if _imported:
+                        st.success(
+                            ("Imported: " if _lang == "en" else "Importiert: ")
+                            + ", ".join(_imported)
+                        )
+                        st.rerun()
+                    for _e in _errors:
+                        st.error(_e)
+
+        # Importierte Ergebnisse anzeigen
+        if p.screening_results:
+            _sr_label = ("Imported Screening Results" if _lang == "en"
+                         else "Importierte Screening-Ergebnisse")
+            st.subheader(_sr_label)
+            _sr_cols = st.columns(min(len(p.screening_results), 4))
+            for _idx, (_tid, _sr) in enumerate(p.screening_results.items()):
+                with _sr_cols[_idx % len(_sr_cols)]:
+                    _name = _sr.get("test_name", {})
+                    _disp_name = (_name.get(_lang, _name.get("de", _tid))
+                                  if isinstance(_name, dict) else str(_name))
+                    st.metric(
+                        label=_tid.upper(),
+                        value=f"{_sr.get('total_score', '?')} / {_sr.get('max_score', '?')}",
+                        help=_disp_name
+                    )
+                    _sev_label = _sr.get("label", {})
+                    if isinstance(_sev_label, dict):
+                        _sev_label = _sev_label.get(_lang, _sev_label.get("de", ""))
+                    _color = _sr.get("color", "#999")
+                    st.markdown(
+                        f"<span style='color:{esc(_color)};font-weight:bold;'>"
+                        f"{esc(str(_sev_label))}</span>",
+                        unsafe_allow_html=True
+                    )
+                    if _sr.get("alerts"):
+                        for _al in _sr["alerts"]:
+                            _al_text = (_al.get(_lang, _al.get("de", str(_al)))
+                                        if isinstance(_al, dict) else str(_al))
+                            st.error(_al_text)
+
         # HiTOP-Spektren-Radar anzeigen
         if p.crosscutting_level1:
             st.markdown("---")
