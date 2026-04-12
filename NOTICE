@@ -19,3 +19,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Scientific Papers (paper/ directory):
+
+The accompanying scientific papers are licensed under
+Creative Commons Attribution 4.0 International (CC-BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+
+---
+
+Diagnostic Instruments (test definitions in _data/testcenter/tests/):
+
+The test definitions reference validated screening instruments that are
+published under their own respective licenses. See _data/testcenter/NOTICE.md
+for details. The JSON files in this repository contain item content reproduced
+for clinical and research use in accordance with each instrument's terms.
