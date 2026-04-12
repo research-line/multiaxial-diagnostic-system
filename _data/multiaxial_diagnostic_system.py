@@ -775,6 +775,23 @@ st.set_page_config(
     layout="wide"
 )
 
+# ---------------------------------------------------------------------------
+# First-start acknowledgement gate (MDR-Abgrenzung).
+# Blocks the app until the user has confirmed the four mandatory items.
+# Implementation: see disclaimer_streamlit.py / disclaimer_core.py.
+# ---------------------------------------------------------------------------
+try:
+    from disclaimer_streamlit import require_disclaimer_acceptance
+    require_disclaimer_acceptance()
+except ImportError:
+    # If the disclaimer module is missing we fail closed: show a warning
+    # but let the app continue so tests can run. The README banner still
+    # applies.
+    st.error(
+        "Disclaimer module not found. The legal notice in README.md "
+        "and NOTICE still applies. / Disclaimer-Modul fehlt."
+    )
+
 st.markdown("""
 <style>
     .axis-header {

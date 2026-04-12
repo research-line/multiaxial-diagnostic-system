@@ -2,9 +2,37 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18736725.svg)](https://doi.org/10.5281/zenodo.18736725)
 
-A computer-assisted 6-axis psychiatric diagnostic system integrating DSM-5-TR, ICD-11, and ICF in a unified expert system.
+A computer-assisted 6-axis research prototype for structured documentation and coding of psychiatric diagnostic reasoning. It integrates DSM-5-TR, ICD-11, and ICF within a single expert-system-style interface.
 
-> **For qualified mental health professionals only.** This tool supports but does not replace clinical judgment.
+> ⚠️ **Kein Medizinprodukt / Not a Medical Device**
+>
+> Das multiaxial-diagnostic-system ist **kein Medizinprodukt** im Sinne der MDR
+> (EU) 2017/745, **nicht klinisch validiert**, **nicht durch BfArM oder eine
+> Benannte Stelle geprüft**, **nicht zertifiziert**. Es ist ein Softwareentwurf
+> zur Erforschung von strukturierter Dokumentation und Kodierung diagnostischer
+> Prozesse (6-Achsen-Modell, DSM-5-TR / ICD-11 / ICF-Integration) zu
+> **Lehr-, Forschungs- und Softwareentwicklungszwecken**.
+>
+> - **Keine Diagnose.** Ausgaben sind strukturierte Kodierungsvorschläge, keine klinischen Diagnosen.
+> - **Keine Therapieempfehlung.**
+> - **Keine klinische Entscheidungsunterstützung** im Sinne der MDR-Zweckbestimmung.
+>
+> Diagnose und Behandlungsentscheidung bleiben qualifizierten Fachleuten
+> vorbehalten (Ärztinnen/Ärzte, Psychotherapeutinnen/Psychotherapeuten).
+>
+> Unentgeltliche Open-Source-Schenkung. Haftung auf Vorsatz und grobe
+> Fahrlässigkeit beschränkt (§ 521 BGB). Nutzung auf eigenes Risiko.
+>
+> *The multiaxial-diagnostic-system is **not a medical device** within the
+> meaning of the EU MDR 2017/745, **not clinically validated**, **not reviewed
+> or certified** by BfArM or any Notified Body. It is a software prototype
+> for teaching, research, and software-engineering purposes exploring the
+> structured documentation and coding of diagnostic reasoning. Outputs are
+> structured coding proposals, not diagnoses, therapy recommendations, or
+> clinical decision support in the regulatory sense. Diagnosis and treatment
+> decisions remain reserved for qualified professionals.*
+
+> **For qualified mental health professionals only.** This tool supports but does not replace clinical judgment. See the full legal notice in [`NOTICE`](NOTICE) and section *Legal Notice* below.
 
 <img src="_data/screenshot.jpg" alt="Multiaxial Diagnostic System - Gatekeeper Interface" width="700">
 
@@ -21,14 +49,14 @@ This system addresses the structural gap left by the abolition of the multiaxial
 | III | Medical Synopsis | IIIa-IIIm (13 sub-axes, symmetric to Axis I) | Physician |
 | IV | Environment & Functioning | ICF, WHODAS 2.0, GAF, GdB, CFI | Social Worker |
 | V | Integrated Condition Model | 3P/4P Case Formulation | Interdisciplinary Team |
-| VI | Evidence Collection & Clinical Safety | Evidence Matrix, CAVE Alerts, Symptom Timeline | All Professions |
+| VI | Evidence Collection & Data-Integrity Layer | Evidence Matrix, CAVE pattern notifications, Symptom Timeline | All Professions |
 
 ### Key Innovations
 
 - **Formal Coverage Analysis** (Ii/IIIi): Set-based metric C(S) = |explained| / |total symptoms| plus percentage-based symptom-diagnosis matrix identifying unexplained symptoms
 - **Symmetric Axis I/III Architecture**: Identical structural tools for psychologists and physicians
 - **PRO/CONTRA Evidence Evaluation**: Structured evidence for/against each diagnosis with confidence estimation
-- **CAVE Clinical Alerts**: Cross-axis risk management (drug interactions, lab artifacts, contraindications)
+- **CAVE pattern-based notifications**: Cross-axis rule-based notifications (drug-interaction patterns, lab artifacts, contraindication patterns) — *no automated clinical risk assessment*
 - **Prioritized Investigation Plan**: 3-tier system (Urgent / Important / Monitoring)
 - **Longitudinal Symptom Timeline**: Tracking onset, status, and therapy response over time
 - **HiTOP Spectra**: Automatically computed from Cross-Cutting screening results
@@ -45,7 +73,7 @@ The preprint is available in English, German, and a combined bilingual edition:
 - [`paper/Review_Multiaxiale_Diagnostik_v2_en.pdf`](paper/Review_Multiaxiale_Diagnostik_v2_en.pdf) -- English
 - [`paper/Review_Multiaxiale_Diagnostik_v2_ger.pdf`](paper/Review_Multiaxiale_Diagnostik_v2_ger.pdf) -- German
 
-### Security & Quality (V10)
+### Data-Integrity & Input-Validation Layer (V10)
 
 - **XSS Protection**: All user-supplied data HTML-escaped before rendering
 - **GAF Deprecation Notice**: DSM-5 replaced GAF with WHODAS 2.0; system shows deprecation warning
@@ -158,7 +186,7 @@ See [Ausbauplan_Prototyp_V9.md](_results/Ausbauplan_Prototyp_V9.md) for the full
 - PRO/CONTRA evidence evaluation with confidence
 - Formal + quantitative coverage analysis with metrics
 - Prioritized investigation plan (3-tier)
-- CAVE clinical alerts
+- CAVE pattern-based notifications
 - Longitudinal symptom timeline
 - Extended medication form (IIIm)
 - Full JSON export

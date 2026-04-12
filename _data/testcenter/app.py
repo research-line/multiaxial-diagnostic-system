@@ -24,6 +24,18 @@ import scoring as scoring_engine
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
+# First-start acknowledgement gate (MDR-Abgrenzung).
+# Registers /disclaimer and a before_request hook that redirects users
+# there until they confirm the four mandatory items.
+try:
+    from disclaimer import register_disclaimer  # type: ignore
+    register_disclaimer(app)
+except ImportError:
+    logging.getLogger(__name__).warning(
+        "Disclaimer module not found — gate disabled. "
+        "README/NOTICE still apply."
+    )
+
 import logging
 import traceback as _tb
 logging.basicConfig(level=logging.DEBUG, force=True)

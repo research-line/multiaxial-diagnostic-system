@@ -1,3 +1,96 @@
+NOTICE — Multiaxial Diagnostic Expert System
+=============================================
+
+NOT A MEDICAL DEVICE / KEIN MEDIZINPRODUKT
+------------------------------------------
+
+This software is NOT a medical device within the meaning of the EU
+Medical Device Regulation (MDR) 2017/745 nor the In-Vitro Diagnostic
+Regulation (IVDR) 2017/746. It is:
+
+- NOT clinically validated
+- NOT reviewed or certified by BfArM, any Notified Body, or any
+  other competent authority
+- NOT a clinical decision support system in the regulatory sense
+- NOT intended for diagnosis, prevention, monitoring, prediction,
+  prognosis, treatment, or alleviation of disease
+
+It is a software prototype for research, teaching, and software
+engineering purposes. It explores the structured documentation and
+coding of diagnostic reasoning across a 6-axis model integrating
+DSM-5-TR, ICD-11, and ICF.
+
+Diese Software ist KEIN Medizinprodukt im Sinne der EU-Medizinprodukte-
+verordnung (MDR) 2017/745 oder der In-vitro-Diagnostika-Verordnung
+(IVDR) 2017/746. Sie ist:
+
+- NICHT klinisch validiert
+- NICHT durch BfArM, eine Benannte Stelle oder eine andere
+  zuständige Behörde geprüft oder zertifiziert
+- KEIN klinisches Entscheidungsunterstützungssystem im
+  regulatorischen Sinne
+- NICHT zur Diagnose, Prävention, Überwachung, Vorhersage,
+  Prognose, Behandlung oder Linderung von Krankheiten bestimmt
+
+Es handelt sich um einen Softwareprototyp für Forschungs-, Lehr- und
+Softwareentwicklungszwecke. Er erforscht die strukturierte
+Dokumentation und Kodierung diagnostischer Überlegungen in einem
+6-Achsen-Modell (DSM-5-TR / ICD-11 / ICF).
+
+NO DIAGNOSIS, NO THERAPY RECOMMENDATION /
+KEINE DIAGNOSE, KEINE THERAPIEEMPFEHLUNG
+----------------------------------------
+
+Outputs of this software are structured coding proposals and
+pattern-based notifications. They are:
+
+- NOT clinical diagnoses
+- NOT therapy recommendations
+- NOT a substitute for clinical assessment by qualified
+  professionals
+
+Diagnosis, treatment decisions, and clinical responsibility remain
+with qualified professionals (physicians, psychotherapists) in
+accordance with applicable professional law (e.g. § 76 SGB V,
+§ 630a BGB in Germany).
+
+Ausgaben dieser Software sind strukturierte Kodierungsvorschläge und
+musterbasierte Hinweise. Sie sind:
+
+- KEINE klinischen Diagnosen
+- KEINE Therapieempfehlungen
+- KEIN Ersatz für die klinische Beurteilung durch qualifizierte
+  Fachpersonen
+
+Diagnose, Behandlungsentscheidung und klinische Verantwortung
+verbleiben bei qualifizierten Fachpersonen (Ärztinnen/Ärzte,
+Psychotherapeutinnen/Psychotherapeuten) gemäß dem einschlägigen
+Berufsrecht (u. a. § 76 SGB V, § 630a BGB).
+
+LIABILITY / HAFTUNG
+-------------------
+
+Unpaid open-source gift (§§ 516 ff. BGB). Liability is limited to
+intent and gross negligence (§ 521 BGB). Use at your own risk.
+
+Unentgeltliche Open-Source-Schenkung (§§ 516 ff. BGB). Haftung auf
+Vorsatz und grobe Fahrlässigkeit beschränkt (§ 521 BGB). Nutzung
+auf eigenes Risiko.
+
+AUTHOR / AUTOR
+--------------
+
+Lukas Geiger, Bernau im Schwarzwald, Germany.
+Independent researcher. Not a physician, not a psychotherapist.
+AI-assisted development (Claude Opus, Gemini, Copilot).
+
+Version: NOTICE-1.0 (2026-04-12)
+
+===============================================
+
+LICENSING
+=========
+
 MIT License
 
 Copyright (c) 2026 Lukas Geiger
