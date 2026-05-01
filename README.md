@@ -72,6 +72,7 @@ The theoretical foundation and clinical rationale for this system are described 
 The preprint is available in English, German, and a combined bilingual edition:
 - [`paper/Review_Multiaxiale_Diagnostik_v2_en.pdf`](paper/Review_Multiaxiale_Diagnostik_v2_en.pdf) -- English
 - [`paper/Review_Multiaxiale_Diagnostik_v2_ger.pdf`](paper/Review_Multiaxiale_Diagnostik_v2_ger.pdf) -- German
+- [`paper/Review_Multiaxiale_Diagnostik_v2_kombi.pdf`](paper/Review_Multiaxiale_Diagnostik_v2_kombi.pdf) -- combined bilingual edition
 
 ### Data-Integrity & Input-Validation Layer (V10)
 
