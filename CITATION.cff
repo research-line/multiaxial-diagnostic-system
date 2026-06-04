@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this research prototype, please cite the Zenodo record."
+type: software
+title: "Multiaxial Diagnostic Expert System"
+authors:
+  - family-names: Geiger
+    given-names: Lukas
+year: 2026
+doi: 10.5281/zenodo.18736725
+repository-code: "https://github.com/um-bruch/multiaxial-diagnostic-system"
+url: "https://github.com/um-bruch/multiaxial-diagnostic-system"
+license: MIT
+abstract: "Research-use-only 6-axis software prototype for structured psychiatric documentation and coding across DSM-5-TR, ICD-11, ICF, WHODAS 2.0, PID-5-BF, and related screening instruments."
+keywords:
+  - multiaxial diagnosis
+  - psychiatric documentation
+  - DSM-5-TR
+  - ICD-11
+  - ICF
+  - research software
+  - not a medical device

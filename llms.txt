@@ -1,0 +1,39 @@
+# Multiaxial Diagnostic Expert System
+
+Canonical repository: https://github.com/um-bruch/multiaxial-diagnostic-system
+Primary DOI: https://doi.org/10.5281/zenodo.18736725
+License: MIT for software code; CC-BY 4.0 for papers; diagnostic instruments keep their original licenses.
+
+## Purpose
+
+This repository contains a research-use-only software prototype for structured psychiatric documentation and coding across a 6-axis model. It combines DSM-5-TR, ICD-11, ICF, WHODAS 2.0, PID-5-BF, HiTOP-oriented spectra, evidence matrices, CAVE pattern notifications, and longitudinal symptom tracking.
+
+The repository also contains a standalone Flask-based Diagnostic Testcenter with bilingual test definitions, scoring logic, token-based assessment sessions, print-friendly output, and a JSON API.
+
+## Safety Boundary
+
+This project is not a medical device, not clinically validated, not certified by BfArM or any Notified Body, and not intended to diagnose, treat, prevent, monitor, predict, or alleviate disease. Outputs are structured coding proposals, screening results, and documentation aids, not clinical diagnoses or therapy recommendations. Diagnosis and treatment decisions remain reserved for qualified professionals.
+
+## Important Files
+
+- `README.md`: human-facing overview, quick start, model summary, and legal boundary.
+- `NOTICE`: legal and license boundary, including not-a-medical-device language.
+- `CITATION.cff`: citation metadata for GitHub, Zenodo, and reference managers.
+- `paper/Review_Multiaxiale_Diagnostik_v3_en.pdf`: English preprint.
+- `paper/Review_Multiaxiale_Diagnostik_v3_ger.pdf`: German preprint.
+- `_data/multiaxial_diagnostic_system.py`: main Streamlit prototype.
+- `_data/testcenter/app.py`: standalone Flask Testcenter.
+- `_data/testcenter/tests/`: JSON definitions for 26 screening instruments.
+- `_data/testcenter/NOTICE.md`: instrument licensing notes.
+- `tests/test_disclaimer_core.py`: tests for the first-start disclaimer and acknowledgement logic.
+
+## Search Phrases
+
+- multiaxial psychiatric documentation prototype
+- DSM-5-TR ICD-11 ICF integration
+- 6-axis diagnostic reasoning model
+- research-use-only mental-health informatics
+- Streamlit psychiatric documentation prototype
+- Flask diagnostic screening Testcenter
+- not a medical device psychiatric research software
+

@@ -2,7 +2,17 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18736725.svg)](https://doi.org/10.5281/zenodo.18736725)
 
-A computer-assisted 6-axis research prototype for structured documentation and coding of psychiatric diagnostic reasoning. It integrates DSM-5-TR, ICD-11, and ICF within a single expert-system-style interface.
+A research-use-only 6-axis software prototype for structured documentation and coding of psychiatric diagnostic reasoning. It integrates DSM-5-TR, ICD-11, and ICF within one expert-system-style interface, plus a standalone bilingual screening-instrument Testcenter.
+
+| Start here | What to open |
+|---|---|
+| Understand the model | [`paper/Review_Multiaxiale_Diagnostik_v3_en.pdf`](paper/Review_Multiaxiale_Diagnostik_v3_en.pdf) and the DOI record |
+| Run the main prototype | `streamlit run _data/multiaxial_diagnostic_system.py` |
+| Run the Testcenter | `python _data/testcenter/app.py` |
+| Check the safety boundary | [`NOTICE`](NOTICE) and [`SECURITY.md`](SECURITY.md) |
+| Give citation metadata to tools | [`CITATION.cff`](CITATION.cff) and [`llms.txt`](llms.txt) |
+
+**Search context:** multiaxial psychiatric documentation prototype, DSM-5-TR ICD-11 ICF integration, 6-axis diagnostic reasoning model, research-use-only mental-health informatics, Streamlit psychiatric documentation, Flask screening-instrument Testcenter.
 
 > ⚠️ **Kein Medizinprodukt / Not a Medical Device**
 >
