@@ -1,6 +1,8 @@
 # Multiaxial Diagnostic Expert System
 
+Last-checked: 2026-06-12
 Canonical repository: https://github.com/um-bruch/multiaxial-diagnostic-system
+Legacy redirect: https://github.com/research-line/multiaxial-diagnostic-system should resolve to the canonical Um:bruch repository.
 Primary DOI: https://doi.org/10.5281/zenodo.18736725
 License: MIT for software code; CC-BY 4.0 for papers; diagnostic instruments keep their original licenses.
 
@@ -19,8 +21,9 @@ This project is not a medical device, not clinically validated, not certified by
 - `README.md`: human-facing overview, quick start, model summary, and legal boundary.
 - `NOTICE`: legal and license boundary, including not-a-medical-device language.
 - `CITATION.cff`: citation metadata for GitHub, Zenodo, and reference managers.
-- `paper/Review_Multiaxiale_Diagnostik_v3_en.pdf`: English preprint.
-- `paper/Review_Multiaxiale_Diagnostik_v3_ger.pdf`: German preprint.
+- `paper/Review_Multiaxiale_Diagnostik_v4_en.pdf`: English preprint.
+- `paper/Review_Multiaxiale_Diagnostik_v4_ger.pdf`: German preprint.
+- `paper/Review_Multiaxiale_Diagnostik_v4_kombi.pdf`: combined bilingual preprint.
 - `_data/multiaxial_diagnostic_system.py`: main Streamlit prototype.
 - `_data/testcenter/app.py`: standalone Flask Testcenter.
 - `_data/testcenter/tests/`: JSON definitions for 26 screening instruments.
@@ -30,10 +33,12 @@ This project is not a medical device, not clinically validated, not certified by
 ## Search Phrases
 
 - multiaxial psychiatric documentation prototype
+- um-bruch multiaxial diagnostic system
 - DSM-5-TR ICD-11 ICF integration
 - 6-axis diagnostic reasoning model
+- computer-assisted psychiatric diagnosis research prototype
 - research-use-only mental-health informatics
 - Streamlit psychiatric documentation prototype
 - Flask diagnostic screening Testcenter
 - not a medical device psychiatric research software
-
+- Zenodo multiaxial diagnostic expert system

@@ -4,15 +4,17 @@
 
 A research-use-only 6-axis software prototype for structured documentation and coding of psychiatric diagnostic reasoning. It integrates DSM-5-TR, ICD-11, and ICF within one expert-system-style interface, plus a standalone bilingual screening-instrument Testcenter.
 
+**Canonical repository:** [`um-bruch/multiaxial-diagnostic-system`](https://github.com/um-bruch/multiaxial-diagnostic-system). Older `research-line/multiaxial-diagnostic-system` search results are legacy redirects.
+
 | Start here | What to open |
 |---|---|
-| Understand the model | [`paper/Review_Multiaxiale_Diagnostik_v3_en.pdf`](paper/Review_Multiaxiale_Diagnostik_v3_en.pdf) and the DOI record |
+| Understand the model | [`paper/Review_Multiaxiale_Diagnostik_v4_en.pdf`](paper/Review_Multiaxiale_Diagnostik_v4_en.pdf), [`paper/Review_Multiaxiale_Diagnostik_v4_ger.pdf`](paper/Review_Multiaxiale_Diagnostik_v4_ger.pdf), and the DOI record |
 | Run the main prototype | `streamlit run _data/multiaxial_diagnostic_system.py` |
 | Run the Testcenter | `python _data/testcenter/app.py` |
 | Check the safety boundary | [`NOTICE`](NOTICE) and [`SECURITY.md`](SECURITY.md) |
 | Give citation metadata to tools | [`CITATION.cff`](CITATION.cff) and [`llms.txt`](llms.txt) |
 
-**Search context:** multiaxial psychiatric documentation prototype, DSM-5-TR ICD-11 ICF integration, 6-axis diagnostic reasoning model, research-use-only mental-health informatics, Streamlit psychiatric documentation, Flask screening-instrument Testcenter.
+**Search context:** um-bruch multiaxial diagnostic system, multiaxial psychiatric documentation prototype, DSM-5-TR ICD-11 ICF integration, 6-axis diagnostic reasoning model, research-use-only mental-health informatics, Streamlit psychiatric documentation, Flask screening-instrument Testcenter, not-a-medical-device psychiatric research software.
 
 > ⚠️ **Kein Medizinprodukt / Not a Medical Device**
 >
