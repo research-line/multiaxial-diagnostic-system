@@ -43,11 +43,12 @@ paper/_designcheck*/
 
 # Internal project management (not for public repo)
 Plan.txt
+LOCK*.txt
 KONZEPT.md
-AKTIONSPLAN.md
+AKTIONSPLAN*.md
 PUBLIKATIONSPLAN.md
 POSTRELEASE-PR.md
-TODO.md
+TODO*.md
 DONE.md
 ZENODO_CREDENTIALS.md
 BEWEISNOTIZ*.md
@@ -64,6 +65,7 @@ _private/
 _partners/
 _copilot/
 _handoff/
+_transfer/
 *_submission/
 *BRIEFING*
 CORE*.txt
@@ -77,8 +79,18 @@ REVIEW_CYCLE*.md
 _results/REVIEW_CHAIN_*.md
 _results/LLM_MUSTER_CHECK_*.md
 _results/QUELLENCHECK_TESTCENTER_*.md
+_results/DATEN_STRUKTURDESIGN_*.md
+_results/DE_EN_SYNCHRONISATIONSCHECK_*.md
+_results/PDF_DESIGN_CHECK_*.md
+_results/PROJECT_HEALTH_CHECK_*.md
+_results/STYLECHECK_*.md
+_results/ZITATIONSCHECK_*.md
 _JMIR_Mental_Health/
 _sources/
+paper/*-WORKSTATION-LG*
+paper/*-ASUS-GEI*
+paper/en_first.txt
+paper/ger_first.txt
 
 # Session data (may contain patient information)
 diagnostic_session.json

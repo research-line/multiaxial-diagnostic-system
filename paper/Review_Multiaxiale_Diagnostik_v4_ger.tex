@@ -77,7 +77,7 @@
 \author[1]{Lukas Geiger\thanks{Korrespondenz: Lukas Geiger, Bernau, Deutschland. ORCID: \href{https://orcid.org/0009-0005-7296-1534}{0009-0005-7296-1534}}}
 \affil[1]{Unabh\"angiger Forscher, Bernau}
 
-\date{Mai 2026}
+\date{Juni 2026}
 
 \maketitle
 
@@ -672,7 +672,7 @@ Die DSM-5 Field Trials \citep{Narrow2013} zeigten \textbf{gute bis exzellente Te
 
 Das DSM-5 Cross-Cutting-System umfasst eine separate \textbf{Elternberichtsversion f\"ur Kinder und Jugendliche} (6--17~Jahre) mit \textbf{25~Items \"uber 12~Dom\"anen}. Die Dom\"ane \glqq Pers\"onlichkeitsfunktion\grqq{} entf\"allt entwicklungsbedingt; stattdessen werden Reizbarkeit und \"Arger st\"arker gewichtet. Eine vollst\"andige Implementierung erfordert die p\"adiatrische Variante als separaten Einstiegspfad sowie altersangepasste Level-2-Instrumente.
 
-Das vorliegende System bevorzugt \textbf{ausschlie\ss{}lich frei verf\"ugbare Instrumente}; der proprietaere CBCL/YSR-Komplex \citep{Achenbach2001} wird zwar als Referenzstandard anerkannt, aber durch lizenzfreie Alternativen ersetzt. Tabelle~\ref{tab:instrumente_kj} listet die empfohlene Auswahl freier K/J-Instrumente parallel zur Erwachsenenmatrix (Tabelle~\ref{tab:instrumente}).
+Das vorliegende System bevorzugt \textbf{ausschlie\ss{}lich frei verf\"ugbare Instrumente}; der propriet\"are CBCL/YSR-Komplex \citep{Achenbach2001} wird zwar als Referenzstandard anerkannt, aber durch lizenzfreie Alternativen ersetzt. Tabelle~\ref{tab:instrumente_kj} listet die empfohlene Auswahl freier K/J-Instrumente parallel zur Erwachsenenmatrix (Tabelle~\ref{tab:instrumente}).
 
 \begin{table}[htbp]
 \centering
@@ -1134,6 +1134,29 @@ Diese Grenzen machen das System nicht unbrauchbar, sondern unterstreichen die No
 \textbf{Aktueller Status:} Der vorliegende Artikel pr\"asentiert die konzeptionelle Architektur und technische Implementierung des 6-Achsen-Modells. Die nachfolgend beschriebene Validierungsstrategie stellt einen \textit{Implementierungsplan} dar --- die empirische Validierung ist zum gegenw\"artigen Zeitpunkt noch nicht durchgef\"uhrt. Dieser Abschnitt beschreibt daher die geplanten Validierungsschritte, nicht bereits vorliegende Ergebnisse.
 
 Die Abschaffung des DSM-IV-Systems wurde unter anderem durch mangelnde Interrater-Reliabilit\"at begr\"undet. Das vorliegende System muss daher von Anfang an eine rigorose Validierungsstrategie verfolgen:
+
+\begin{table}[htbp]
+\centering
+\caption{Validierungs-Gate-Ledger f\"ur die geplante Post-Design-Evaluation. Die Zeilen definieren das minimale Datenobjekt, das vorliegen muss, bevor ein Designclaim zu einem Prozess-, Nutzen- oder klinischen Validit\"atsclaim angehoben werden darf.}
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}L{2.7cm}Y Y Y@{}}
+\toprule
+Gate & Minimales Datenobjekt & Pass- / Hold-Regel & Verhinderter \"Uberclaim \\
+\midrule
+Diagnostic Reasoning Ledger & Extrahierte Befunde, Differenzialhypothesen, Regel/Backing, Ausschlusskriterien, Unsicherheit und Review-Notizen & Pass nur, wenn Prim\"ardiagnosen und verworfene Alternativen von Patientendaten zu klinischer Regel und Expertenreview r\"uckverfolgbar sind & Top-1-Diagnose\"ubereinstimmung oder LLM-Vorschlag wird als nachgewiesene Reasoning-Qualit\"at gelesen \\
+Consultation Evidence-Gathering Gate & Frageprotokoll zu fehlenden DSM-/ICD-Kriterien, Dauer, Funktion, Fremdanamnese und somatischen Ausschl\"ussen & Hold, wenn ein fehlendes Kriterium aus Schweigen erschlossen statt aktiv erfragt oder als nicht verf\"ugbar markiert wird & Statische Vignettenkorrektheit wird als Konsultationskompetenz missverstanden \\
+Synthetic-Fidelity-/Fairness-Gate & Vignettenmanifest mit Demografie, Basisratenannahmen, Schwellenverteilungen und Subgruppenfehlern & Pass nur, wenn synthetische F\"alle klinisch plausible Varianz erhalten und seltene oder Minderheitenprofile nicht kollabieren & Plausible Einzelf\"alle werden als populationsvalide Evaluationsdaten behandelt \\
+AI-Agent-Governance-Gate & Rollendefinition, Human-in-the-loop-Punkt, Eskalationsregel, Audit-Log, Datenschutzgrenze und Monitoringplan & Hold, wenn das System autonom diagnostisch handeln kann oder Verantwortung nicht zuordenbar ist & Ein Assistenzprototyp wird als klinisch validierte autonome KI dargestellt \\
+ICD-Coding-Boundary & Mapping von klinischer Entscheidung zu administrativem ICD-Code mit Codierrolle und Umgang mit Dissens & Pass nur, wenn die Codierung explizit nachgelagert bleibt und die klinische Diagnose nicht ver\"andert & Codiergenauigkeit wird als diagnostische Validit\"at gewertet \\
+Achse-VI-Biomarker-Queue & Signalprovenienz, Validierungspopulation, Leakage-Pr\"ufung, Subgruppenanalyse und prospektiver Best\"atigungsstatus & Hold, solange Wearable-, Stimm-, EMA- oder Chronosignale nicht repliziert sind und nur Kandidatensignale bleiben & Explorative digitale Signale werden zu diagnostischen Biomarkern erhoben \\
+\bottomrule
+\end{tabularx}
+\label{tab:validierungs-gate-ledger}
+\normalsize
+\end{table}
+
+Tabelle~\ref{tab:validierungs-gate-ledger} ist damit eine Designanforderungstabelle, keine Ergebnistabelle. Sie h\"alt die geplante Validierungssequenz an der zentralen Grenze des Modells fest: Strukturierte Entscheidungsunterst\"utzung kann vor klinischer Wirksamkeit evaluiert werden, darf aber ohne entsprechende Gate-Daten nicht als validierte klinische Diagnostik dargestellt werden.
 
 \begin{description}[style=nextline, leftmargin=1.5cm, font=\bfseries]
 \item[Phase~1: Expertenbegutachtung (N=10--15)] Strukturierte Begutachtung der Achsenarchitektur durch Psychiater, klinische Psychologen und Sozialarbeiter. Bewertung der Vollst\"andigkeit, klinischen Plausibilit\"at und Praktikabilit\"at. Ziel: Identifikation fehlender Subachsen oder \"uberfl\"ussiger Komponenten.

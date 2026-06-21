@@ -72,7 +72,7 @@
 \author[1]{Lukas Geiger\thanks{Correspondence: Lukas Geiger, Bernau, Germany. ORCID: \href{https://orcid.org/0009-0005-7296-1534}{0009-0005-7296-1534}}}
 \affil[1]{Independent Researcher, Bernau}
 
-\date{May 2026}
+\date{June 2026}
 
 \maketitle
 
@@ -1122,6 +1122,29 @@ These boundaries do not render the system useless but underscore the necessity o
 \label{sec:validation}
 
 \textbf{Current status:} This paper presents the conceptual architecture and technical implementation of the 6-axis model. The validation strategy described below represents an \textit{implementation plan}---empirical validation has not yet been conducted.
+
+\begin{table}[htbp]
+\centering
+\caption{Validation-gate ledger for the planned post-design evaluation. The rows define the minimum data object that must be collected before a design claim can be upgraded to a process, utility, or clinical-validity claim.}
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}L{2.7cm}Y Y Y@{}}
+\toprule
+Gate & Minimum data object & Pass / hold rule & Overclaim prevented \\
+\midrule
+Diagnostic reasoning ledger & Extracted findings, differential hypotheses, rule/backing, exclusion criteria, uncertainty, and reviewer notes & Pass only if primary diagnoses and rejected alternatives are traceable from patient data to clinical rule and expert review & Treating top-1 diagnostic agreement or an LLM suggestion as demonstrated reasoning quality \\
+Consultation evidence-gathering gate & Question log for missing DSM/ICD criteria, duration, function, collateral history, and somatic exclusions & Hold if a missing criterion is inferred from silence rather than actively queried or marked as unavailable & Treating static vignette accuracy as consultation competence \\
+Synthetic-vignette fidelity and fairness & Vignette manifest with demographics, base-rate assumptions, threshold distributions, and subgroup error checks & Pass only if synthetic cases preserve clinically plausible variance and do not collapse rare or minority profiles & Treating plausible single vignettes as population-valid evaluation data \\
+AI-agent governance gate & Role definition, human-in-the-loop point, escalation rule, audit log, privacy boundary, and post-deployment monitoring plan & Hold if the system can act as an autonomous diagnostic agent or if responsibility cannot be assigned & Treating an assistive prototype as clinically validated autonomous AI \\
+ICD-coding boundary & Mapping from clinical decision to administrative ICD code, including coder role and disagreement handling & Pass only if coding output is explicitly downstream of, and does not alter, the clinical diagnostic conclusion & Treating coding accuracy as diagnostic validity \\
+Axis~VI biomarker queue & Signal provenance, validation population, leakage check, subgroup analysis, and prospective confirmation status & Hold unless wearable, voice, EMA, or chronobiological signals remain candidate cues until replicated & Treating exploratory digital signals as diagnostic biomarkers \\
+\bottomrule
+\end{tabularx}
+\label{tab:validation-gate-ledger}
+\normalsize
+\end{table}
+
+Table~\ref{tab:validation-gate-ledger} is therefore a design requirement table, not an empirical results table. Its purpose is to keep the planned validation sequence aligned with the model's central boundary: structured decision support may be evaluated before clinical efficacy is claimed, but it must not be presented as validated clinical diagnosis without the corresponding gate data.
 
 \begin{description}[style=nextline, leftmargin=1.5cm, font=\bfseries]
 \item[Phase~1: Expert Review (N=10--15)] Structured review of axis architecture by psychiatrists, clinical psychologists, and social workers. Assessment of completeness, clinical plausibility, and practicability.
