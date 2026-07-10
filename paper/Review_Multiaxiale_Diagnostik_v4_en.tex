@@ -92,19 +92,12 @@
 \endgroup
 
 % ===================================================================
-% AI USAGE DECLARATION (ICMJE/COPE-compliant)
+% AI USAGE DECLARATION (NEUTRAL, NON-AUTHORIAL)
 % ===================================================================
 \section*{Declaration on the Use of AI-Assisted Tools}
 \addcontentsline{toc}{section}{Declaration on the Use of AI-Assisted Tools}
 
-AI-assisted tools were used as non-authorial support tools during the preparation of this manuscript:
-
-\begin{description}[style=nextline, leftmargin=2cm]
-\item[\textbf{Claude Opus 4.6} (Anthropic)] Support for literature organization, text structuring, translation assistance, drafting assistance, consistency checks, and iterative design review. This did not constitute independent scientific validation; all substantive decisions were made and are the responsibility of the human author.
-\item[\textbf{Gemini} (Google DeepMind) \& \textbf{Copilot} (Microsoft)] Supplementary consistency checks and literature-search support. Outputs were treated as suggestions requiring human assessment.
-\end{description}
-
-\noindent The conceptual design, scientific argumentation, and responsibility for the entire content lie exclusively with the author. In accordance with ICMJE and COPE guidelines, AI systems do not meet the criteria for authorship. They are not authors or co-authors, were not used as acknowledgement recipients, ground-truth authorities, or independent validators, and do not bear responsibility for the manuscript.
+Generative AI tools were used as non-authorial aids for literature organization, text structuring, translation support, linguistic revision, consistency checks, and LaTeX/PDF quality assurance. Their outputs were treated as provisional suggestions and were checked, revised, or rejected by the author. They did not serve as authors, co-authors, acknowledgement recipients, factual authorities, or independent validators. The research design, source selection, scientific argumentation, clinical interpretation, final editorial decisions, and responsibility for the manuscript remain solely with the author.
 
 \newpage
 
@@ -121,7 +114,7 @@ This paper follows a design science methodology for the development of a clinica
 
 \textbf{Phase~3: Prototypical implementation.} A Python reference implementation (approx.\ 1,850~lines) using hierarchical state machines (\texttt{transitions} library) and a Streamlit interface was developed to demonstrate feasibility. The source code is publicly available in the \href{https://github.com/um-bruch/multiaxial-diagnostic-system}{project repository on GitHub}.
 
-\textbf{Phase~4: AI-assisted development and review.} Manuscript and system design were developed by the author with substantial AI-assisted tool support (Claude Opus 4.6 for structuring and drafting assistance; Gemini and Copilot for consistency checks and literature-search support). All AI tool use is documented in the AI usage declaration section. The scientific responsibility for all content lies with the human author.
+\textbf{Phase~4: AI-assisted process support.} The author used generative AI tools for non-authorial support in literature organization, text structuring, linguistic revision, and consistency checking. All generated suggestions remained subject to authorial review; AI-assisted work did not replace empirical validation or expert review. The scientific responsibility for all content lies with the author.
 
 \textbf{Scope and limitations of the present paper.} This is a methods and design paper. It presents the architecture, rationale, and prototypical implementation of the 6-axis model. Empirical validation (inter-rater reliability, clinical utility, convergent validity) is planned in four phases (Section~\ref{sec:validation}) but has not yet been conducted. The coverage analysis thresholds (85\%/60\%) are proposed as initial values based on clinical reasoning and require empirical calibration in future studies. Following design science methodology \citep{Hevner2004, Peffers2007}, the formal evaluation phase of the artifact is still pending; the validation strategy described in Section~\ref{sec:validation} outlines the planned evaluation framework.
 

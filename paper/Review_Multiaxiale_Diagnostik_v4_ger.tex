@@ -97,19 +97,12 @@
 \endgroup
 
 % ===================================================================
-% KI-NUTZUNGSERKLAERUNG (ICMJE/COPE-konform)
+% KI-NUTZUNGSERKLAERUNG (NEUTRAL, NICHT-AUTORSCHAFTLICH)
 % ===================================================================
 \section*{Erkl\"arung zur Nutzung KI-gest\"utzter Werkzeuge}
 \addcontentsline{toc}{section}{Erkl\"arung zur Nutzung KI-gest\"utzter Werkzeuge}
 
-Bei der Erstellung dieses Manuskripts wurden KI-gest\"utzte Werkzeuge als nicht-autorschaftliche Hilfsmittel eingesetzt:
-
-\begin{description}[style=nextline, leftmargin=2cm]
-\item[\textbf{Claude Opus 4.6} (Anthropic)] Unterst\"utzung bei Literaturorganisation, Textstrukturierung, \"Ubersetzung, Formulierung, Konsistenzpr\"ufung und iterativer Designpr\"ufung. Dies stellte keine unabh\"angige wissenschaftliche Validierung dar; alle inhaltlichen Entscheidungen wurden vom menschlichen Autor getroffen und verantwortet.
-\item[\textbf{Gemini} (Google DeepMind) \& \textbf{Copilot} (Microsoft)] Erg\"anzende Konsistenzpr\"ufungen und Unterst\"utzung bei der Literaturrecherche. Ausgaben wurden als Vorschl\"age behandelt, die menschliche Bewertung erfordern.
-\end{description}
-
-\noindent Die inhaltliche Konzeption, wissenschaftliche Argumentation und Verantwortung f\"ur den gesamten Inhalt liegen ausschlie\ss{}lich beim Autor. Gem\"a\ss{} ICMJE- und COPE-Richtlinien erf\"ullen KI-Systeme nicht die Kriterien f\"ur Autorenschaft. Sie sind weder Autoren noch Koautoren, keine Danksagungsempf\"anger, keine Wahrheits- oder Referenzinstanzen und keine unabh\"angigen Validierungsinstanzen; sie tragen keine Verantwortung f\"ur das Manuskript.
+Generative KI-Werkzeuge wurden als nicht-autorschaftliche Hilfsmittel f\"ur Literaturorganisation, Textstrukturierung, \"Ubersetzungsunterst\"utzung, sprachliche \"Uberarbeitung, Konsistenzpr\"ufungen und LaTeX/PDF-Qualit\"atssicherung eingesetzt. Ihre Ausgaben wurden als vorl\"aufige Vorschl\"age behandelt und vom Autor gepr\"uft, \"uberarbeitet oder verworfen. Sie dienten weder als Autoren oder Koautoren noch als Danksagungsempf\"anger, Fakteninstanzen oder unabh\"angige Validierungsinstanzen. Forschungsdesign, Quellenauswahl, wissenschaftliche Argumentation, klinische Interpretation, finale redaktionelle Entscheidungen und Verantwortung f\"ur das Manuskript liegen ausschlie\ss{}lich beim Autor.
 
 \newpage
 
@@ -126,7 +119,7 @@ Diese Arbeit folgt einer Design-Science-Methodik f\"ur die Entwicklung eines kli
 
 \textbf{Phase~3: Prototypische Implementierung.} Eine Python-Referenzimplementierung (ca.\ 1.850~Zeilen) unter Verwendung hierarchischer Zustandsmaschinen (\texttt{transitions}-Bibliothek) und einer Streamlit-Oberfl\"ache wurde entwickelt, um die Machbarkeit zu demonstrieren. Der Quellcode ist im \href{https://github.com/um-bruch/multiaxial-diagnostic-system}{Projekt-Repository auf GitHub} \"offentlich verf\"ugbar.
 
-\textbf{Phase~4: KI-gest\"utzte Entwicklung und Begutachtung.} Manuskript und Systemdesign wurden vom Autor mit substanzieller KI-gest\"utzter Werkzeugunterst\"utzung entwickelt (Claude Opus 4.6 f\"ur Strukturierungs- und Formulierungshilfe; Gemini und Copilot f\"ur Konsistenzpr\"ufungen und Unterst\"utzung bei der Literaturrecherche). Die KI-Nutzung ist im Abschnitt zur Nutzung KI-gest\"utzter Werkzeuge dokumentiert. Die wissenschaftliche Verantwortung f\"ur alle Inhalte liegt beim menschlichen Autor.
+\textbf{Phase~4: KI-gest\"utzte Prozessunterst\"utzung.} Der Autor nutzte generative KI-Werkzeuge als nicht-autorschaftliche Hilfsmittel f\"ur Literaturorganisation, Textstrukturierung, sprachliche \"Uberarbeitung und Konsistenzpr\"ufung. Alle generierten Vorschl\"age unterlagen der Pr\"ufung durch den Autor; die KI-gest\"utzte Arbeit ersetzte weder empirische Validierung noch Expertenbegutachtung. Die wissenschaftliche Verantwortung f\"ur alle Inhalte liegt beim Autor.
 
 \textbf{Umfang und Limitationen der vorliegenden Arbeit.} Dies ist ein Methoden- und Designpapier. Es pr\"asentiert Architektur, Begr\"undung und prototypische Implementierung des 6-Achsen-Modells. Die empirische Validierung (Interrater-Reliabilit\"at, klinischer Nutzen, konvergente Validit\"at) ist in vier Phasen geplant (Abschnitt~\ref{sec:validierung}), aber noch nicht durchgef\"uhrt. Die Abdeckungsanalyse-Schwellenwerte (85\%/60\%) sind als initiale Werte auf Basis klinischer Erw\"agungen vorgeschlagen und bed\"urfen empirischer Kalibrierung in zuk\"unftigen Studien. Gem\"a\ss{} der Design-Science-Methodik \citep{Hevner2004, Peffers2007} steht die formale Evaluationsphase des Artefakts noch aus; die in Abschnitt~\ref{sec:validierung} beschriebene Validierungsstrategie beschreibt den geplanten Evaluationsrahmen.
 
