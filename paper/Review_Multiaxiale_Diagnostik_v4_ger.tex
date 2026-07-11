@@ -445,6 +445,18 @@ VI & Alle Professionen & Jede beteiligte Profession belegt ihre eigenen Befunde 
 
 Der Mehrwert der Zuordnung liegt nicht in einer starren Zugangsbeschr\"ankung, sondern in der \textbf{strukturierten Aufforderung}: Das System macht transparent, \textit{welche} Kompetenz f\"ur welche Achse typischerweise ben\"otigt wird. In Einzelpraxen oder kleineren Settings kann eine einzelne Fachperson alle Achsen bearbeiten; in Kliniken und interdisziplin\"aren Teams erm\"oglicht das Modell eine effiziente Arbeitsteilung, bei der jede Profession in ihrer Dom\"ane mit identischen strukturellen Werkzeugen arbeitet. Die identische Subachsen-Struktur von Achse~I und~III ist dabei kein Zufall, sondern Designentscheidung: Ein Mediziner, der in IIIh eine somatische Verdachtsdiagnose formuliert, nutzt exakt dieselbe Logik wie ein Psychologe, der in Ih eine psychische Verdachtsdiagnose eintr\"agt.
 
+\subsection{Komorbidit\"atsregeln und diagnostische Hierarchie}
+\label{sec:komorbiditaet}
+
+Das System implementiert drei Ebenen von Komorbidit\"atsregeln, die f\"ur die korrekte diagnostische Entscheidungsfindung essentiell sind:
+
+\begin{description}[style=nextline, leftmargin=1.5cm, font=\bfseries]
+\item[Hierarchische Exklusionsregeln] Bestimmte Diagnosen schlie\ss{}en andere aus. Beispiel: Eine Schizophrenie-Diagnose schlie\ss{}t eine gleichzeitige schizoaffektive St\"orung aus. Das System kodiert diese als harte Constraints, die bei der Diagnoseeingabe automatisch gepr\"uft werden.
+\item[\glqq Due to another condition\grqq{}-Regeln] Viele DSM-5-TR-Diagnosen erfordern den Ausschluss, dass die Symptomatik durch eine andere psychische St\"orung, eine Substanz oder einen medizinischen Krankheitsfaktor besser erkl\"art wird. Diese Regeln werden direkt durch die Gatekeeper-Stufen~1--3 (Abschnitt~\ref{sec:gatekeeper}) implementiert.
+\item[Erlaubte Komorbidit\"aten mit Priorisierung] Bei 4+ aktiven Diagnosen priorisiert das System nach: (1)~klinischer Dringlichkeit (Suizidalit\"at, Psychose), (2)~Schweregrad (Achse-I-Akutstatus), (3)~Behandelbarkeit (modifizierbare aufrechterhaltende Faktoren aus Achse~V), (4)~chronologischer Reihenfolge.
+\end{description}
+
+
 \clearpage
 \subsection{Vollst\"andiges Sub-Achsen-Inventar}
 
@@ -534,17 +546,6 @@ VI\\Evidenz\\\& Sicherheit & VIa: Zentrale Evidenz-Matrix & Strukturierte Eviden
 \end{tabular}
 \end{CompactLongTable}
 \end{table}
-
-\subsection{Komorbidit\"atsregeln und diagnostische Hierarchie}
-\label{sec:komorbiditaet}
-
-Das System implementiert drei Ebenen von Komorbidit\"atsregeln, die f\"ur die korrekte diagnostische Entscheidungsfindung essentiell sind:
-
-\begin{description}[style=nextline, leftmargin=1.5cm, font=\bfseries]
-\item[Hierarchische Exklusionsregeln] Bestimmte Diagnosen schlie\ss{}en andere aus. Beispiel: Eine Schizophrenie-Diagnose schlie\ss{}t eine gleichzeitige schizoaffektive St\"orung aus. Das System kodiert diese als harte Constraints, die bei der Diagnoseeingabe automatisch gepr\"uft werden.
-\item[\glqq Due to another condition\grqq{}-Regeln] Viele DSM-5-TR-Diagnosen erfordern den Ausschluss, dass die Symptomatik durch eine andere psychische St\"orung, eine Substanz oder einen medizinischen Krankheitsfaktor besser erkl\"art wird. Diese Regeln werden direkt durch die Gatekeeper-Stufen~1--3 (Abschnitt~\ref{sec:gatekeeper}) implementiert.
-\item[Erlaubte Komorbidit\"aten mit Priorisierung] Bei 4+ aktiven Diagnosen priorisiert das System nach: (1)~klinischer Dringlichkeit (Suizidalit\"at, Psychose), (2)~Schweregrad (Achse-I-Akutstatus), (3)~Behandelbarkeit (modifizierbare aufrechterhaltende Faktoren aus Achse~V), (4)~chronologischer Reihenfolge.
-\end{description}
 
 
 % ===================================================================
@@ -1056,6 +1057,48 @@ ICD-11 selbst hat sich in Richtung ICF-Integration bewegt, indem \glqq Functioni
 
 
 % ===================================================================
+% 14a. KLINISCHE FALLVIGNETTE
+% ===================================================================
+\section{Beispielhafte Fallvignette}
+\label{sec:fallvignette}
+
+\textit{Hinweis: Die folgende Fallvignette ist fiktiv und dient ausschlie\ss{}lich der Illustration der Anwendbarkeit des 6-Achsen-Modells. Jede \"Ahnlichkeit mit realen Personen ist zuf\"allig.}
+
+\vspace{0.5em}
+\noindent \textbf{Patient M., 34~Jahre, m\"annlich, Erstvorstellung in der psychiatrischen Ambulanz.}
+
+\begin{description}[style=nextline, leftmargin=1.5cm, font=\bfseries\small]
+\item[Achse~I (Psychische Profile)]
+Ia (akut): Mittelgradige depressive Episode (F32.1), Konfidenz 85\%, PRO: PHQ-9 = 16, Antriebslosigkeit, Schlafst\"orungen seit 4~Monaten; CONTRA: keine Suizidalit\"at, erhaltene Arbeitsf\"ahigkeit. \\
+Ih (Verdacht): Generalisierte Angstst\"orung (F41.1), Konfidenz 55\%, PRO: GAD-7 = 12, chronische Sorgen; CONTRA: m\"oglicherweise sekund\"ar zur Depression. \\
+Ii (Abdeckung): Gesamtabdeckung $\sim$78\%. Nicht abgedeckt: chronische R\"uckenschmerzen (somatisch? funktionell?), Konzentrationsprobleme (depressionsassoziiert oder eigenst\"andig?). \\
+Ij (Plan): Wichtig: Neuropsychologische Testung zur Kl\"arung der Konzentrationsst\"orung; Wichtig: Somatische Abkl\"arung der R\"uckenschmerzen (funktionell vs.\ strukturell); Verlauf: PHQ-9-Monitoring alle 4~Wochen, C-SSRS-Screening bei Verschlechterung.
+\item[Achse~II (Biographie)]
+PID-5-BF+M: Erh\"ohte Negative Affektivit\"at (T=68), grenzwertige Distanziertheit (T=60). \\
+Pr\"agende Erfahrung: Fr\"uhe Scheidung der Eltern (Alter 7), intermittierendes Mobbing in der Schule (12--15~J.). \\
+Grundkonflikt: Autonomie-Abh\"angigkeits-Konflikt (OPD).
+\item[Achse~III (Med. Synopse)]
+IIIa: Lumbales Schmerzsyndrom (M54.5). IIIc: Hypothyreose (E03.9), beitragend zur Fatigue --- Kausalanalyse (IIIk): TSH = 6.2~mU/L, partielle Erkl\"arung der Antriebsminderung. \\
+IIIm: L-Thyroxin 75\,$\mu$g, Wirkung 6/10; Ibuprofen 400\,mg b.B., Wirkung 5/10; keine relevanten Interaktionen.
+\item[Achse~IV (Umwelt \& Funktion)]
+WHODAS~2.0 Gesamtscore: 28/100 (moderate Beeintr\"achtigung). Mini-ICF-APP: Einschr\"ankungen in Regelm\"a\ss{}igkeit (3/4), Kontaktf\"ahigkeit (2/4). GdB: nicht beantragt. \\
+Stressoren: Drohender Arbeitsplatzverlust, Partnerschaftskrise. \\
+Bezugspersonen: Partnerin (ambivalent st\"utzend), Hausarzt Dr.~X, kein Therapeut bisher.
+\item[Achse~V (Bedingungsmodell)]
+P1 (Pr\"adisposition): Fr\"uhe Verlusterfahrung, erh\"ohte Negative Affektivit\"at. \\
+P2 (Ausl\"oser): Arbeitsplatzbedrohung seit 4~Monaten, zeitlich konkordant mit Symptombeginn. \\
+P3 (Aufrechterhaltung): Sozialer R\"uckzug, unbehandelte Hypothyreose, Schmerzchronifizierung. \\
+P4 (Protektiv): Durchschnittliche Intelligenz, stabile Wohnsituation, Problembewusstsein.
+\item[Achse~VI (Belegsammlung)]
+Evidenz-Matrix: PHQ-9 (21.02.2026), GAD-7 (21.02.2026), Labor (TSH, CRP --- 15.02.2026). \\
+CAVE: Hypothyreose beitragende Ursache der Fatigue --- Schilddr\"usenparameter vor Antidepressiva-Einstellung kontrollieren! \\
+Symptomverlauf: Antriebslosigkeit seit November 2025, progredient; R\"uckenschmerzen seit 2024, fluktuierend.
+\end{description}
+
+\noindent Diese Vignette illustriert, wie das 6-Achsen-Modell eine integrierte diagnostische Perspektive erm\"oglicht: Die Abdeckungsanalyse (78\%) --- berechnet als $C_{\text{total}} = \frac{1}{n} \sum c(s_i)$ \"uber die Symptome Niedergeschlagenheit, Antriebslosigkeit, Schlafst\"orungen, Sorgen, R\"uckenschmerzen und Konzentrationsst\"orungen, wobei R\"uckenschmerzen und Konzentrationsst\"orungen nur partiell durch bestehende Diagnosen abgedeckt sind (vgl.\ Abschnitt~\ref{sec:abdeckung}) --- identifiziert ungekl\"arte Symptome. Der CAVE-Hinweis verhindert eine vorschnelle Antidepressiva-Einstellung ohne Schilddr\"usenkontrolle, und das Bedingungsmodell verbindet biographische Vulnerabilit\"at mit aktuellem Ausl\"oser.
+
+
+% ===================================================================
 % 10. ETHIK UND DATENSCHUTZ
 % ===================================================================
 \section{Ethik, Datenschutz und algorithmischer Bias}
@@ -1274,48 +1317,6 @@ Das vorgestellte 6-Achsen-Modell unterliegt mehreren Limitationen, die bei der I
 \textbf{Learning-Health-System-Perspektive:} Die strukturierten, standardisiert kodierten Daten des 6-Achsen-Modells (ICD-11, SNOMED~CT, ICF, PID-5) eignen sich ideal f\"ur sekund\"are Forschungsnutzung. In einem Learning-Health-System-Paradigma tr\"agt jede diagnostische Episode zur iterativen Verbesserung der Gewichtsmatrix der Abdeckungsanalyse bei: Empirische Symptom-Diagnose-Assoziationen aus aggregierten, anonymisierten Patientendaten k\"onnen die initialen Gewichte schrittweise durch datengest\"utzte Sch\"atzungen ersetzen. Diese Perspektive verbindet die klinische Routineanwendung mit der kontinuierlichen Systemoptimierung.
 
 \textbf{Zuk\"unftiger Forschungsbedarf:} Neben der empirischen Validierung (Abschnitt~\ref{sec:validierung}) sind vier Forschungsrichtungen priorit\"ar: (1)~die Entwicklung eines abgek\"urzten \glqq Rapid Assessment\grqq{}-Modus f\"ur Notaufnahmen und Erstgespr\"ache, (2)~die Integration pr\"adiktiver Modelle (maschinelles Lernen) zur Unterst\"utzung der Differenzialdiagnostik auf Basis der akkumulierten Patientendaten, (3)~l\"angsschnittliche Studien zur Sensitivit\"at des Symptomverlaufs (Achse~VI) f\"ur Therapieansprechen und R\"uckfallpr\"adiktion, und (4)~die Anbindung an Ecological Momentary Assessment (EMA) und Digital Phenotyping: Smartphone-basierte Echtzeit-Datenerhebung k\"onnte den longitudinalen Symptomverlauf (Achse~VI) mit kontinuierlichen Verhaltensdaten anreichern und die zeitliche Aufl\"osung der diagnostischen Dokumentation substanziell erh\"ohen. Dar\"uber hinaus sollte die tats\"achliche klinische Einf\"uhrung durch einen Implementation-Science-Rahmen --- etwa das Consolidated Framework for Implementation Research (CFIR) --- begleitet werden, der Barrieren und F\"orderfaktoren der Adoption in den f\"unf CFIR-Dom\"anen (Intervention Characteristics, Outer Setting, Inner Setting, Individuals, Process) systematisch erfasst. Die historische Erfahrung mit dem DSM-IV-Multiaxialsystem zeigt, dass selbst gut konzipierte Systeme an inkonsistenter klinischer Nutzung scheitern k\"onnen.
-
-
-% ===================================================================
-% 14a. KLINISCHE FALLVIGNETTE
-% ===================================================================
-\section{Beispielhafte Fallvignette}
-\label{sec:fallvignette}
-
-\textit{Hinweis: Die folgende Fallvignette ist fiktiv und dient ausschlie\ss{}lich der Illustration der Anwendbarkeit des 6-Achsen-Modells. Jede \"Ahnlichkeit mit realen Personen ist zuf\"allig.}
-
-\vspace{0.5em}
-\noindent \textbf{Patient M., 34~Jahre, m\"annlich, Erstvorstellung in der psychiatrischen Ambulanz.}
-
-\begin{description}[style=nextline, leftmargin=1.5cm, font=\bfseries\small]
-\item[Achse~I (Psychische Profile)]
-Ia (akut): Mittelgradige depressive Episode (F32.1), Konfidenz 85\%, PRO: PHQ-9 = 16, Antriebslosigkeit, Schlafst\"orungen seit 4~Monaten; CONTRA: keine Suizidalit\"at, erhaltene Arbeitsf\"ahigkeit. \\
-Ih (Verdacht): Generalisierte Angstst\"orung (F41.1), Konfidenz 55\%, PRO: GAD-7 = 12, chronische Sorgen; CONTRA: m\"oglicherweise sekund\"ar zur Depression. \\
-Ii (Abdeckung): Gesamtabdeckung $\sim$78\%. Nicht abgedeckt: chronische R\"uckenschmerzen (somatisch? funktionell?), Konzentrationsprobleme (depressionsassoziiert oder eigenst\"andig?). \\
-Ij (Plan): Wichtig: Neuropsychologische Testung zur Kl\"arung der Konzentrationsst\"orung; Wichtig: Somatische Abkl\"arung der R\"uckenschmerzen (funktionell vs.\ strukturell); Verlauf: PHQ-9-Monitoring alle 4~Wochen, C-SSRS-Screening bei Verschlechterung.
-\item[Achse~II (Biographie)]
-PID-5-BF+M: Erh\"ohte Negative Affektivit\"at (T=68), grenzwertige Distanziertheit (T=60). \\
-Pr\"agende Erfahrung: Fr\"uhe Scheidung der Eltern (Alter 7), intermittierendes Mobbing in der Schule (12--15~J.). \\
-Grundkonflikt: Autonomie-Abh\"angigkeits-Konflikt (OPD).
-\item[Achse~III (Med. Synopse)]
-IIIa: Lumbales Schmerzsyndrom (M54.5). IIIc: Hypothyreose (E03.9), beitragend zur Fatigue --- Kausalanalyse (IIIk): TSH = 6.2~mU/L, partielle Erkl\"arung der Antriebsminderung. \\
-IIIm: L-Thyroxin 75\,$\mu$g, Wirkung 6/10; Ibuprofen 400\,mg b.B., Wirkung 5/10; keine relevanten Interaktionen.
-\item[Achse~IV (Umwelt \& Funktion)]
-WHODAS~2.0 Gesamtscore: 28/100 (moderate Beeintr\"achtigung). Mini-ICF-APP: Einschr\"ankungen in Regelm\"a\ss{}igkeit (3/4), Kontaktf\"ahigkeit (2/4). GdB: nicht beantragt. \\
-Stressoren: Drohender Arbeitsplatzverlust, Partnerschaftskrise. \\
-Bezugspersonen: Partnerin (ambivalent st\"utzend), Hausarzt Dr.~X, kein Therapeut bisher.
-\item[Achse~V (Bedingungsmodell)]
-P1 (Pr\"adisposition): Fr\"uhe Verlusterfahrung, erh\"ohte Negative Affektivit\"at. \\
-P2 (Ausl\"oser): Arbeitsplatzbedrohung seit 4~Monaten, zeitlich konkordant mit Symptombeginn. \\
-P3 (Aufrechterhaltung): Sozialer R\"uckzug, unbehandelte Hypothyreose, Schmerzchronifizierung. \\
-P4 (Protektiv): Durchschnittliche Intelligenz, stabile Wohnsituation, Problembewusstsein.
-\item[Achse~VI (Belegsammlung)]
-Evidenz-Matrix: PHQ-9 (21.02.2026), GAD-7 (21.02.2026), Labor (TSH, CRP --- 15.02.2026). \\
-CAVE: Hypothyreose beitragende Ursache der Fatigue --- Schilddr\"usenparameter vor Antidepressiva-Einstellung kontrollieren! \\
-Symptomverlauf: Antriebslosigkeit seit November 2025, progredient; R\"uckenschmerzen seit 2024, fluktuierend.
-\end{description}
-
-\noindent Diese Vignette illustriert, wie das 6-Achsen-Modell eine integrierte diagnostische Perspektive erm\"oglicht: Die Abdeckungsanalyse (78\%) --- berechnet als $C_{\text{total}} = \frac{1}{n} \sum c(s_i)$ \"uber die Symptome Niedergeschlagenheit, Antriebslosigkeit, Schlafst\"orungen, Sorgen, R\"uckenschmerzen und Konzentrationsst\"orungen, wobei R\"uckenschmerzen und Konzentrationsst\"orungen nur partiell durch bestehende Diagnosen abgedeckt sind (vgl.\ Abschnitt~\ref{sec:abdeckung}) --- identifiziert ungekl\"arte Symptome. Der CAVE-Hinweis verhindert eine vorschnelle Antidepressiva-Einstellung ohne Schilddr\"usenkontrolle, und das Bedingungsmodell verbindet biographische Vulnerabilit\"at mit aktuellem Ausl\"oser.
 
 
 % ===================================================================
