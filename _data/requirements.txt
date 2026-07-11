@@ -3,3 +3,15 @@ plotly>=5.18.0
 pandas>=2.1.0
 transitions>=0.9.0
 anytree>=2.12.0
+
+# External classification catalogues, bound via _data/icd_modules.py.
+# The application degrades gracefully if these are absent: it falls back to the
+# bundled psychiatric seed catalogue rather than guessing codes.
+#
+# ICD-10 (WHO 2019) and ICD-10-CM work fully offline.
+# ICD-11 binds the official WHO ICD-API and additionally requires free OAuth2
+# credentials (register at https://icd.who.int/icdapi):
+#     WHO_ICD_CLIENT_ID / WHO_ICD_CLIENT_SECRET
+simple-icd-10>=2.1.1
+simple-icd-10-cm>=1.5.0
+simple-icd-11>=1.2.0

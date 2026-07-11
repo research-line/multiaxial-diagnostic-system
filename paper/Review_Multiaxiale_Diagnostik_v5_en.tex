@@ -995,6 +995,38 @@ Interoperability & HL7 FHIR (R4) & Standardized data exchange \\
 \end{tabularx}
 \end{table}
 
+\subsection{Classification Catalogue Bindings}
+\label{sec:catalog-bindings}
+
+A diagnostic coding tool must answer a prior question before it can answer any clinical one: \emph{where does this code come from?} The reference implementation answers it by refusing to own the classifications at all.
+
+Earlier versions shipped a hand-curated seed catalogue of psychiatric codes inside the repository. That is adequate for demonstrating an axis model, but it is the classic failure mode of clinical coding software: a private copy of a classification silently diverges from the maintained one, and the divergence is invisible precisely where it matters---at the point of coding. The implementation therefore no longer maintains a copy. It \textbf{binds external catalogue modules} behind a single provider interface (Table~\ref{tab:catalog-bindings}), and the bundled seed catalogue is demoted to an explicit offline fallback.
+
+\begin{table}[H]
+\centering
+\caption{External classification catalogue bindings}
+\label{tab:catalog-bindings}
+\begin{tabularx}{\textwidth}{lXll}
+\toprule
+\textbf{Catalogue} & \textbf{Bound via} & \textbf{Data licence} & \textbf{Mode} \\
+\midrule
+ICD-10 (WHO 2019) & \texttt{simple-icd-10} & Public domain (CC0) & Offline \\
+ICD-10-CM (US) & \texttt{simple-icd-10-cm} & Public-domain CDC/NCHS & Offline \\
+ICD-11 (WHO) & \texttt{simple-icd-11} $\rightarrow$ WHO ICD-API & CC BY-ND 3.0 IGO & Online, credential-gated \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Two properties of the binding are deliberate design commitments rather than implementation details.
+
+\textbf{Provenance is explicit.} Every resolved code carries its source, licence, bound module, and release, and the interface surfaces which catalogue actually answered. A coding proposal whose origin cannot be named is not a usable coding proposal, and an unlabelled code in a clinical record is a liability rather than an aid.
+
+\textbf{Verification is tri-state.} A lookup returns \texttt{verified}, \texttt{not\_found}, or \texttt{unavailable}. The third state exists because the distinction between \emph{``the catalogue says this code does not exist''} and \emph{``we could not ask the catalogue''} is clinically load-bearing. Collapsing \texttt{unavailable} into \texttt{not\_found} would present an unverifiable code as refuted; collapsing it into \texttt{verified} would be worse still. The system does neither.
+
+ICD-11 is the case where this matters most. The WHO ICD-API is the authoritative source, and it requires OAuth2 credentials (free registration at \texttt{icd.who.int/icdapi}). Where credentials or network access are absent, the ICD-11 provider reports itself unavailable and the application degrades to the seed catalogue---it does not fabricate ICD-11 codes to fill the gap. The CC BY-ND 3.0 IGO licence on WHO ICD-11 content is a further reason to query rather than vendor: the no-derivatives clause forbids redistributing the catalogue in altered form, which a local transformed copy would do.
+
+The boundary drawn in the validation gate ledger (Section~\ref{sec:validation}) applies unchanged to these bindings. A correct catalogue lookup demonstrates \emph{coding and documentation accuracy}. It does not demonstrate diagnostic validity, and no accumulation of correctly resolved codes may be presented as clinical validation of the axis model.
+
 \subsection{Open-Source Reference Implementation}
 
 The complete source code of the prototype (V9, approx.\ 1,850~lines Python/Streamlit), the bilingual translation file, the development roadmap, and this paper are publicly available at:

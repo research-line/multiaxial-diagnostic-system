@@ -129,3 +129,49 @@ The test definitions reference validated screening instruments that are
 published under their own respective licenses. See _data/testcenter/NOTICE.md
 for details. The JSON files in this repository contain item content reproduced
 for clinical and research use in accordance with each instrument's terms.
+
+---
+
+Classification Catalogues (bound via _data/icd_modules.py):
+
+This repository does NOT contain a copy of the ICD classifications. The
+catalogues are bound as external modules at runtime. Their data and licences
+belong to their respective owners:
+
+  ICD-10 (WHO, 2019 release)
+    Bound via:  simple-icd-10 (PyPI)
+    Data:       Public domain (CC0)
+    Mode:       Offline
+    Upstream:   https://icd.who.int/browse10/
+
+  ICD-10-CM (US clinical modification)
+    Bound via:  simple-icd-10-cm (PyPI, MIT-licensed wrapper)
+    Data:       Public-domain US federal data (CDC/NCHS)
+    Mode:       Offline
+    Upstream:   https://www.cdc.gov/nchs/icd/icd-10-cm/
+    Caveat:     The packaged release lags the current CDC/NCHS fiscal-year
+                release. For billing-relevant coding, verify against the
+                current official release.
+
+  ICD-11 (WHO)
+    Bound via:  simple-icd-11 (PyPI) against the official WHO ICD-API
+    Data:       CC BY-ND 3.0 IGO (World Health Organization)
+    Mode:       ONLINE ONLY. Requires free OAuth2 credentials
+                (WHO_ICD_CLIENT_ID / WHO_ICD_CLIENT_SECRET), obtainable at
+                https://icd.who.int/icdapi
+    Behaviour:  Without credentials the ICD-11 binding reports itself as
+                unavailable and the application falls back to the bundled
+                psychiatric seed catalogue. It does NOT guess codes.
+
+WHO ICD-11 content is licensed CC BY-ND 3.0 IGO. The no-derivatives clause
+means WHO ICD-11 content retrieved through the API must not be modified or
+redistributed in altered form. This project therefore queries the API at
+runtime rather than vendoring or transforming the catalogue.
+
+DSM-5 / DSM-5-TR:
+
+DSM-5 and DSM-5-TR criteria, diagnostic texts, and category names are the
+copyright of the American Psychiatric Association and are NOT reproduced in
+this repository. Where the software refers to DSM-aligned categories it uses
+the ICD-10-CM codes listed in DSM-5-TR, which are public domain, together with
+descriptions written for this project.

@@ -149,20 +149,81 @@ python app.py
 | DAST-10 | 10 | Drug use problems | I | Sum (0-10) |
 | MDQ | 14 | Bipolar spectrum screening | I | Symptom count + co-occurrence |
 
+## Classification Catalogues: ICD-10, ICD-10-CM, ICD-11
+
+The system keeps **no private copy** of the ICD classifications. Maintaining a
+hand-typed catalogue inside the repository would create a second, silently
+diverging source of truth — the classic failure mode of clinical coding tools.
+Instead, `_data/icd_modules.py` **binds established external catalogue modules**
+behind one uniform provider interface.
+
+| Catalogue | Bound via | Data licence | Mode |
+|---|---|---|---|
+| **ICD-10** (WHO 2019) | `simple-icd-10` | Public domain (CC0) | Offline |
+| **ICD-10-CM** (US) | `simple-icd-10-cm` | Public-domain CDC/NCHS data, MIT wrapper | Offline |
+| **ICD-11** (WHO) | `simple-icd-11` → official WHO ICD-API | CC BY-ND 3.0 IGO | **Online, credential-gated** |
+
+Two properties are deliberate:
+
+**Graceful degradation.** A missing package or a missing WHO credential never
+raises. The provider reports `available == False` with a human-readable reason,
+and the application falls back to the bundled psychiatric seed catalogue in
+`diagnostic_codes.db`.
+
+**Provenance is explicit.** Every answer carries its source, licence, module and
+release. The UI states which catalogue actually answered. A coding proposal whose
+origin cannot be named is not a usable coding proposal.
+
+The verification result is deliberately **tri-state**, because the distinction is
+clinically load-bearing:
+
+- `verified` — the external catalogue confirms the code
+- `not_found` — the catalogue is bound and does **not** know this code
+- `unavailable` — we could not ask the catalogue
+
+Collapsing `unavailable` into `not_found` would let an unverifiable code look
+refuted; collapsing it into `verified` would be worse. The system never does either.
+
+### Enabling ICD-11 (WHO ICD-API)
+
+ICD-11 is served by the WHO's authoritative live API and requires free OAuth2
+credentials. Register at <https://icd.who.int/icdapi>, then:
+
+```bash
+export WHO_ICD_CLIENT_ID=...
+export WHO_ICD_CLIENT_SECRET=...
+```
+
+Without credentials the ICD-11 binding stays unavailable **by design** and the app
+keeps working offline against the seed catalogue. It does not guess codes.
+
+Inspect the current bindings at any time:
+
+```bash
+python _data/icd_modules.py     # prints the capability/provenance report as JSON
+```
+
+In the app: sidebar → **Catalogue bindings (ICD)** / **Katalog-Anbindung (ICD)**.
+
 ## Tech Stack
 
 - **Diagnostic System UI**: Streamlit
 - **Testcenter UI**: Flask + Bootstrap 5 + Jinja2
 - **Decision Engine**: `transitions` (Hierarchical State Machine)
 - **Visualization**: Plotly (PID-5 + HiTOP radar charts)
-- **Data Storage**: SQLite (diagnostic codes + test sessions)
-- **Internationalization**: Bilingual (German/English) via `translations.json` (661 keys per language)
+- **Classification Catalogues**: external module bindings (`simple-icd-10`, `simple-icd-10-cm`, `simple-icd-11` → WHO ICD-API)
+- **Data Storage**: SQLite (psychiatric seed catalogue + test sessions)
+- **Internationalization**: Bilingual (German/English) via `translations.json` (688 keys per language)
 
 ## Installation
 
 ```bash
 # Main diagnostic system
+pip install -r _data/requirements.txt
+
+# or explicitly:
 pip install streamlit plotly pandas transitions anytree
+pip install simple-icd-10 simple-icd-10-cm simple-icd-11   # catalogue bindings
 
 # Testcenter (separate)
 pip install flask

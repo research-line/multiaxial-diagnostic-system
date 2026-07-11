@@ -1032,6 +1032,38 @@ Interoperabilit\"at & HL7 FHIR (R4) & Standardisierter Datenaustausch \\
 \end{tabularx}
 \end{table}
 
+\subsection{Anbindung der Klassifikationskataloge}
+\label{sec:katalog-anbindung}
+
+Ein Werkzeug zur diagnostischen Codierung muss eine Frage beantworten, bevor es irgendeine klinische beantworten kann: \emph{Woher stammt dieser Code?} Die Referenzimplementierung beantwortet sie, indem sie die Klassifikationen gar nicht erst selbst besitzt.
+
+Frühere Versionen lieferten einen handkuratierten Seed-Katalog psychiatrischer Codes im Repository mit. Für die Demonstration eines Achsenmodells genügt das, aber es ist die typische Fehlerform klinischer Codiersoftware: Eine private Kopie einer Klassifikation läuft still von der gepflegten Fassung weg, und die Abweichung bleibt genau dort unsichtbar, wo sie zählt --- im Moment des Codierens. Die Implementierung pflegt deshalb keine Kopie mehr. Sie \textbf{bindet externe Katalogmodule} hinter einer einheitlichen Provider-Schnittstelle an (Tabelle~\ref{tab:katalog-anbindung}); der mitgelieferte Seed-Katalog wird zum ausdrücklichen Offline-Rückfallpfad zurückgestuft.
+
+\begin{table}[H]
+\centering
+\caption{Angebundene externe Klassifikationskataloge}
+\label{tab:katalog-anbindung}
+\begin{tabularx}{\textwidth}{lXll}
+\toprule
+\textbf{Katalog} & \textbf{Angebunden über} & \textbf{Datenlizenz} & \textbf{Betriebsart} \\
+\midrule
+ICD-10 (WHO 2019) & \texttt{simple-icd-10} & Public Domain (CC0) & Offline \\
+ICD-10-CM (USA) & \texttt{simple-icd-10-cm} & Public Domain (CDC/NCHS) & Offline \\
+ICD-11 (WHO) & \texttt{simple-icd-11} $\rightarrow$ WHO ICD-API & CC BY-ND 3.0 IGO & Online, zugangsgebunden \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Zwei Eigenschaften der Anbindung sind bewusste Entwurfsentscheidungen und keine Implementierungsdetails.
+
+\textbf{Die Herkunft ist explizit.} Jeder aufgelöste Code führt Quelle, Lizenz, gebundenes Modul und Stand mit sich, und die Oberfläche zeigt an, welcher Katalog tatsächlich geantwortet hat. Ein Codiervorschlag, dessen Herkunft nicht benennbar ist, ist kein brauchbarer Codiervorschlag; ein unbeschrifteter Code in einer Krankenakte ist eher ein Haftungsrisiko als eine Hilfe.
+
+\textbf{Die Verifikation ist dreiwertig.} Eine Abfrage liefert \texttt{verified}, \texttt{not\_found} oder \texttt{unavailable}. Der dritte Zustand existiert, weil der Unterschied zwischen \emph{\glqq der Katalog sagt, diesen Code gibt es nicht\grqq{}} und \emph{\glqq wir konnten den Katalog nicht fragen\grqq{}} klinisch tragend ist. Würde man \texttt{unavailable} auf \texttt{not\_found} abbilden, erschiene ein nicht überprüfbarer Code als widerlegt; die Abbildung auf \texttt{verified} wäre noch schlimmer. Das System tut weder das eine noch das andere.
+
+Am deutlichsten wird das bei ICD-11. Die WHO-ICD-API ist die maßgebliche Quelle und verlangt OAuth2-Zugangsdaten (kostenlose Registrierung unter \texttt{icd.who.int/icdapi}). Fehlen Zugangsdaten oder Netzverbindung, meldet sich der ICD-11-Provider als nicht verfügbar, und die Anwendung fällt auf den Seed-Katalog zurück --- sie erfindet keine ICD-11-Codes, um die Lücke zu füllen. Die Lizenz CC BY-ND 3.0 IGO auf den WHO-ICD-11-Inhalten ist ein weiterer Grund, abzufragen statt mitzuliefern: Die No-Derivatives-Klausel verbietet die Weitergabe des Katalogs in veränderter Form, und genau das wäre eine lokal transformierte Kopie.
+
+Die im Validierungs-Gate-Ledger (Abschnitt~\ref{sec:validierung}) gezogene Grenze gilt für diese Anbindungen unverändert. Eine korrekte Katalogabfrage belegt \emph{Codier- und Dokumentationsgenauigkeit}. Sie belegt keine diagnostische Validität, und keine noch so große Zahl korrekt aufgelöster Codes darf als klinische Validierung des Achsenmodells ausgegeben werden.
+
 \subsection{Open-Source-Referenzimplementierung}
 
 Der vollst\"andige Quellcode des Prototyps (V9, ca.\ 1.850~Zeilen Python/Streamlit), die bilinguale \"Ubersetzungsdatei, der Entwicklungsfahrplan und das vorliegende Manuskript sind \"offentlich verf\"ugbar unter:

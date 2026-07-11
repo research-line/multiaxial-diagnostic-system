@@ -31,8 +31,16 @@ import html as html_mod
 import json
 import math
 import os
+import sys
 from dataclasses import dataclass, field, asdict
 from typing import Optional
+
+# Sibling modules (disclaimer_core, icd_modules) live next to this file. Streamlit
+# does not reliably put the script's own directory on sys.path -- when it does not,
+# those imports fail silently and the app degrades for the wrong reason. Pin it.
+_MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+if _MODULE_DIR not in sys.path:
+    sys.path.insert(0, _MODULE_DIR)
 try:
     from transitions.extensions import HierarchicalMachine
     HAS_TRANSITIONS = True
@@ -192,6 +200,105 @@ def _extract_code(option: str) -> str:
     if option and " - " in option:
         return option.split(" - ")[0].strip()
     return option.strip() if option else ""
+
+
+# ===================================================================
+# EXTERNAL CATALOGUE BINDINGS (ICD-10 / ICD-10-CM / ICD-11)
+# ===================================================================
+# The bundled `diagnostic_codes.db` is a psychiatric SEED catalogue, not a
+# classification. Full-catalogue lookups are delegated to external modules via
+# `icd_modules`. If a module (or the WHO ICD-11 credential) is absent, the
+# binding degrades to the seed catalogue instead of inventing codes.
+
+try:
+    import icd_modules as _icd
+    HAS_ICD_MODULES = True
+except ImportError:
+    _icd = None
+    HAS_ICD_MODULES = False
+
+
+def get_catalog_report() -> list:
+    """Which external catalogues are bound right now, and why not if not."""
+    if not HAS_ICD_MODULES:
+        return []
+    try:
+        return _icd.provider_report()
+    except Exception:
+        return []
+
+
+def verify_code_external(system: str, code: str):
+    """Verify a code against the authoritative external catalogue.
+
+    Returns a dict with an explicit `status`:
+      "verified"     -- the external catalogue confirms the code
+      "not_found"    -- the catalogue is bound and does NOT know this code
+      "unavailable"  -- no external catalogue bound (with a reason)
+
+    The tri-state matters clinically: "unavailable" must never be presented as
+    "verified". An unverifiable code stays unverified.
+    """
+    if not HAS_ICD_MODULES:
+        return {
+            "status": "unavailable",
+            "reason": "icd_modules not importable",
+            "system": system,
+            "code": code,
+        }
+    try:
+        provider = _icd.get_provider(system)
+    except KeyError:
+        return {
+            "status": "unavailable",
+            "reason": f"no provider for {system}",
+            "system": system,
+            "code": code,
+        }
+    if not provider.available():
+        return {
+            "status": "unavailable",
+            "reason": provider.unavailable_reason(),
+            "system": system,
+            "code": code,
+        }
+    entry = provider.describe(code)
+    if entry is None:
+        return {
+            "status": "not_found",
+            "reason": "code not present in the bound catalogue",
+            "system": system,
+            "code": code,
+            "provenance": provider.provenance().as_dict(),
+        }
+    return {
+        "status": "verified",
+        "system": system,
+        "code": entry.code,
+        "title": entry.title,
+        "parent": entry.parent,
+        "children": list(entry.children),
+        "provenance": entry.provenance.as_dict(),
+    }
+
+
+def search_catalog_external(system: str, term: str, limit: int = 25) -> list:
+    """Free-text search over a bound offline catalogue (ICD-10 / ICD-10-CM)."""
+    if not HAS_ICD_MODULES or not term:
+        return []
+    try:
+        provider = _icd.get_provider(system)
+    except KeyError:
+        return []
+    if not provider.available():
+        return []
+    try:
+        return [
+            {"code": e.code, "title": e.title, "system": e.system}
+            for e in provider.search(term, limit=limit)
+        ]
+    except Exception:
+        return []
 
 
 def esc(text) -> str:
@@ -906,7 +1013,8 @@ nav_options = [
     t("nav_axis4"),
     t("nav_axis5"),
     t("nav_axis6"),
-    t("nav_synopsis")
+    t("nav_synopsis"),
+    t("nav_catalog")
 ]
 menu = st.sidebar.radio(t("nav_label"), nav_options)
 
@@ -3025,6 +3133,106 @@ if col_load.button(t("session_load"), key="btn_load"):
         st.sidebar.error(t("session_load_error"))
 
 # Auto-load moved to top of file (before page render) for immediate display
+
+
+# ===================================================================
+# CATALOGUE BINDINGS (ICD-10 / ICD-10-CM / ICD-11)
+# ===================================================================
+
+if menu == t("nav_catalog"):
+    st.markdown(f"<div class='axis-header'>{t('header_catalog')}</div>",
+                unsafe_allow_html=True)
+    st.caption(t("catalog_intro"))
+
+    _report = get_catalog_report()
+
+    if not _report:
+        st.error(t("catalog_no_modules"))
+    else:
+        st.subheader(t("catalog_bindings"))
+        for _entry in _report:
+            _sys = _entry["system"]
+            if _entry["available"]:
+                _prov = _entry["provenance"] or {}
+                with st.expander(f"✅ {_sys.upper()} — {t('catalog_available')}", expanded=False):
+                    st.markdown(
+                        f"- **{t('catalog_source')}:** {esc(_prov.get('source'))}\n"
+                        f"- **{t('catalog_licence')}:** {esc(_prov.get('licence'))}\n"
+                        f"- **{t('catalog_module')}:** `{esc(_prov.get('module'))}`\n"
+                        f"- **{t('catalog_release')}:** {esc(_prov.get('release'))}\n"
+                        f"- **{t('catalog_offline')}:** {'✅' if _prov.get('offline') else '❌'}"
+                    )
+                    if _prov.get("note"):
+                        st.info(esc(_prov["note"]))
+            else:
+                with st.expander(f"⚠️ {_sys.upper()} — {t('catalog_unavailable')}", expanded=False):
+                    st.warning(f"**{t('catalog_reason')}:** {esc(_entry.get('reason'))}")
+                    if _sys == "icd11":
+                        st.info(t("catalog_icd11_hint"))
+
+        _bound = [e["system"] for e in _report if e["available"]]
+
+        st.markdown("---")
+        st.subheader(t("catalog_verify"))
+        _c1, _c2 = st.columns([1, 2])
+        with _c1:
+            _vsys = st.selectbox(
+                t("catalog_system"),
+                [e["system"] for e in _report],
+                key="cat_verify_sys",
+            )
+        with _c2:
+            _vcode = st.text_input(t("catalog_code"), key="cat_verify_code",
+                                   placeholder="F84.0 / 6A02")
+
+        if _vcode:
+            _res = verify_code_external(_vsys, _vcode.strip())
+            if _res["status"] == "verified":
+                st.success(f"**{esc(_res['code'])}** — {esc(_res['title'])}")
+                st.caption(t("catalog_verified"))
+                _p = _res.get("provenance", {})
+                st.caption(
+                    f"{t('catalog_source')}: {esc(_p.get('source'))} · "
+                    f"{t('catalog_licence')}: {esc(_p.get('licence'))}"
+                )
+                if _res.get("parent"):
+                    st.markdown(f"**{t('catalog_parent')}:** `{esc(_res['parent'])}`")
+                if _res.get("children"):
+                    st.markdown(
+                        f"**{t('catalog_children')}:** "
+                        + ", ".join(f"`{esc(c)}`" for c in _res["children"][:12])
+                    )
+            elif _res["status"] == "not_found":
+                st.error(t("catalog_not_found"))
+            else:
+                # Explicitly NOT presented as a negative result.
+                st.warning(t("catalog_unverifiable"))
+                st.caption(esc(_res.get("reason")))
+
+        # Free-text search only over catalogues we can actually enumerate.
+        _searchable = [s for s in _bound if s in ("icd10", "icd10cm")]
+        if _searchable:
+            st.markdown("---")
+            st.subheader(t("catalog_search"))
+            _s1, _s2 = st.columns([1, 2])
+            with _s1:
+                _ssys = st.selectbox(
+                    t("catalog_system"), _searchable, key="cat_search_sys"
+                )
+            with _s2:
+                _term = st.text_input(t("catalog_term"), key="cat_search_term",
+                                      placeholder="autism / Depression")
+            if _term:
+                _hits = search_catalog_external(_ssys, _term.strip(), limit=25)
+                if _hits:
+                    st.caption(f"{t('catalog_hits')}: {len(_hits)}")
+                    for _h in _hits:
+                        st.markdown(f"- `{esc(_h['code'])}` — {esc(_h['title'])}")
+                else:
+                    st.info(t("catalog_no_hits"))
+
+    st.markdown("---")
+    st.warning(t("catalog_disclaimer"))
 
 
 # ===================================================================
