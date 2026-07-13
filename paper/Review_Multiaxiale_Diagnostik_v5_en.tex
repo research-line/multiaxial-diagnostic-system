@@ -77,7 +77,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent The abolition of the multiaxial diagnostic system in DSM-5 (2013) left a structural gap in psychiatric diagnostics. This paper presents a 6-axis model for computer-assisted multiaxial diagnosis that unifies categorical classification according to DSM-5-TR and ICD-11 with the functional assessment of the ICF in a decision support system. The model comprises: Axis~I (Mental Health Profiles with temporal diagnostics and quantitative coverage analysis), Axis~II (dimensional personality assessment via PID-5 and biographical contextualization), Axis~III (Medical Synopsis in symmetric parallel structure to Axis~I), Axis~IV (ICF integration, WHODAS~2.0, Cultural Formulation), Axis~V (operationalized case formulation in a 3P/4P model), and Axis~VI (evidence matrix, CAVE alerts, longitudinal symptom tracking). Three central design contributions are highlighted: (1)~the quantitative coverage analysis (Diagnostic Coverage Index) as a percentage-based metric for diagnostic completeness, (2)~the symmetric Axis~I/III architecture for multi-professional collaboration, and (3)~the operationalized connection between classification and individualized case formulation. The 6-step gatekeeper logic maps the differential diagnosis sequence published by First (2024). A Python reference implementation as a hierarchical state machine is publicly available. This is a methods and design paper; empirical validation is still pending.
+\noindent The abolition of the multiaxial diagnostic system in DSM-5 (2013) left a structural gap in psychiatric diagnostics. This paper presents a 6-axis model for computer-assisted multiaxial diagnosis that unifies categorical classification according to DSM-5-TR and ICD-11 with the functional assessment of the ICF in a decision support system. The model comprises six axes: Axis~I (Mental Health Profiles with temporal diagnostics and quantitative coverage analysis), Axis~II (dimensional personality assessment via PID-5 and biographical contextualization), Axis~III (Medical Synopsis in symmetric parallel structure to Axis~I), Axis~IV (ICF integration, WHODAS~2.0, Cultural Formulation), Axis~V (operationalized case formulation in a 3P/4P model), and Axis~VI (evidence matrix, CAVE alerts, longitudinal symptom tracking). Three central design contributions are highlighted: (1)~the quantitative coverage analysis (Diagnostic Coverage Index) as a percentage-based metric for diagnostic completeness, (2)~the symmetric Axis~I/III architecture for interprofessional collaboration, and (3)~the operationalized connection between classification and individualized case formulation. The six-step gatekeeper logic follows the differential-diagnosis sequence described by First (2024). A Python reference implementation as a hierarchical state machine is publicly available. This is a methods and design paper; empirical validation is still pending.
 
 \vspace{0.5em}
 \noindent \textbf{Keywords:} Multiaxial Diagnosis, DSM-5-TR, ICD-11, Coverage Analysis, Decision Support System, HiTOP, HL7 FHIR, Case Formulation, ICF
@@ -165,7 +165,7 @@ Most critically, the abolition resulted in the loss of structured multiaxial ass
 
 Notably, multiaxial classification remains explicitly preserved in child and adolescent psychiatry: \citet{BJPsychAdv2024} argue that the multiaxial framework represents a ``clinically useful biopsychosocial framework'' that was prematurely abandoned in adult psychiatry. This persistence in a field that inherently requires multidisciplinary collaboration supports the reintroduction of multiaxial structures for adults as well.
 
-A legitimate objection to the reintroduction of multiaxial systems is that the problems of DSM-IV may not merely be matters of implementation but rather inherent to the multiaxial approach itself: the forced partitioning into discrete axes may fragment clinical information that would be better captured holistically. The present model addresses this objection through the skeleton principle (no mandatory fields), the cross-axis case formulation (Axis~V), and the deliberate flexibility of multi-professional assignment. Whether these design decisions actually solve the fragmentation problem is an empirical question that can only be answered through the planned validation.
+A legitimate objection to the reintroduction of multiaxial systems is that the problems of DSM-IV may not merely be matters of implementation but rather inherent to the multiaxial approach itself: the forced partitioning into discrete axes may fragment clinical information that would be better captured holistically. The present model addresses this objection through the skeleton principle (no mandatory fields), the cross-axis case formulation (Axis~V), and the deliberate flexibility of interprofessional assignment. Whether these design decisions actually solve the fragmentation problem is an empirical question that can only be answered through the planned validation.
 
 The present paper introduces a 6-axis model that addresses the specific weaknesses of the historical system while proposing capabilities that go beyond existing systems.
 
@@ -186,7 +186,7 @@ Three design principles guide the entire system:
 
 This philosophy fundamentally distinguishes the system from rigid form-based systems: it provides structure where structure is useful, and freedom where freedom is clinically warranted.
 
-\textbf{Contribution.} The paper's primary contributions are threefold: (1)~the quantitative coverage analysis as a clinical quality assurance metric for diagnostic completeness, (2)~the symmetric Axis~I/III architecture enabling structured multi-professional collaboration, and (3)~the operationalized connection between categorical diagnostics and individualized case formulation within a single system. Related approaches exist in sub-areas (e.g., Bayesian diagnostic systems, OPD multiaxiality); the specific contribution lies in their integration into a computer-assisted decision-support architecture. These design elements address clinical deficits that have persisted since the abolition of the DSM-IV multiaxial system and that have regained urgency through recent calls \citep{ErlichFirst2025}.
+\textbf{Contribution.} The paper's primary contributions are threefold: (1)~the quantitative coverage analysis as a clinical quality assurance metric for diagnostic completeness, (2)~the symmetric Axis~I/III architecture enabling structured interprofessional collaboration, and (3)~the operationalized connection between categorical diagnostics and individualized case formulation within a single system. Related approaches exist in sub-areas (e.g., Bayesian diagnostic systems, OPD multiaxiality); the specific contribution lies in their integration into a computer-assisted decision-support architecture. These design elements address clinical deficits that have persisted since the abolition of the DSM-IV multiaxial system and that have regained urgency through recent calls \citep{ErlichFirst2025}.
 
 
 % ===================================================================
@@ -340,7 +340,7 @@ Beyond dimensional personality assessment (IIa), Axis~II integrates two addition
 \subsection{Axis~III: Medical Synopsis --- Symmetric Parallel Structure to Axis~I}
 \label{sec:axis3}
 
-A central design principle of the model is the \textbf{structural symmetry} between Axis~I (psychological) and Axis~III (somatic). The rationale is that if Axis~I supports suspected diagnoses, documented refutations, and coverage analyses, Axis~III should offer comparable capabilities for the somatic domain. This symmetry is intended to make multi-professional work more consistent.
+A central design principle of the model is the \textbf{structural symmetry} between Axis~I (psychological) and Axis~III (somatic). The rationale is that if Axis~I supports suspected diagnoses, documented refutations, and coverage analyses, Axis~III should offer comparable capabilities for the somatic domain. This symmetry is intended to make interprofessional work more consistent.
 
 Axis~III therefore encompasses 13~sub-axes:
 
@@ -416,7 +416,7 @@ The value of the assignment lies not in rigid access restrictions but in the \te
 
 \begin{table}[H]
 \centering
-\caption{Exemplary multi-professional axis assignment (non-mandatory)}
+\caption{Exemplary interprofessional axis assignment (non-mandatory)}
 \label{tab:professions}
 \begin{tabularx}{\textwidth}{lXX}
 \toprule
@@ -1000,7 +1000,7 @@ Interoperability & HL7 FHIR (R4) & Standardized data exchange \\
 
 A diagnostic coding tool must answer a prior question before it can answer any clinical one: \emph{where does this code come from?} The reference implementation answers it by refusing to own the classifications at all.
 
-Earlier versions shipped a hand-curated seed catalogue of psychiatric codes inside the repository. That is adequate for demonstrating an axis model, but it is the classic failure mode of clinical coding software: a private copy of a classification silently diverges from the maintained one, and the divergence is invisible precisely where it matters---at the point of coding. The implementation therefore no longer maintains a copy. It \textbf{binds external catalogue modules} behind a single provider interface (Table~\ref{tab:catalog-bindings}), and the bundled seed catalogue is demoted to an explicit offline fallback.
+Earlier versions shipped a hand-curated seed catalogue of psychiatric codes inside the repository. That is adequate for demonstrating an axis model, but it is a common failure mode of clinical coding software: a private copy of a classification silently diverges from the maintained one, and the divergence is invisible precisely where it matters---at the point of coding. The implementation therefore no longer maintains a local copy. It \textbf{binds external catalogue modules} behind a single provider interface (Table~\ref{tab:catalog-bindings}), and the bundled seed catalogue is demoted to an explicit offline fallback.
 
 \begin{table}[H]
 \centering
@@ -1011,7 +1011,7 @@ Earlier versions shipped a hand-curated seed catalogue of psychiatric codes insi
 \textbf{Catalogue} & \textbf{Bound via} & \textbf{Data licence} & \textbf{Mode} \\
 \midrule
 ICD-10 (WHO 2019) & \texttt{simple-icd-10} & Public domain (CC0) & Offline \\
-ICD-10-CM (US) & \texttt{simple-icd-10-cm} & Public-domain CDC/NCHS & Offline \\
+ICD-10-CM (US) & \texttt{simple-icd-10\allowbreak-cm} & Public-domain CDC/NCHS & Offline \\
 ICD-11 (WHO) & \texttt{simple-icd-11} $\rightarrow$ WHO ICD-API & CC BY-ND 3.0 IGO & Online, credential-gated \\
 \bottomrule
 \end{tabularx}
@@ -1021,7 +1021,7 @@ Two properties of the binding are deliberate design commitments rather than impl
 
 \textbf{Provenance is explicit.} Every resolved code carries its source, licence, bound module, and release, and the interface surfaces which catalogue actually answered. A coding proposal whose origin cannot be named is not a usable coding proposal, and an unlabelled code in a clinical record is a liability rather than an aid.
 
-\textbf{Verification is tri-state.} A lookup returns \texttt{verified}, \texttt{not\_found}, or \texttt{unavailable}. The third state exists because the distinction between \emph{``the catalogue says this code does not exist''} and \emph{``we could not ask the catalogue''} is clinically load-bearing. Collapsing \texttt{unavailable} into \texttt{not\_found} would present an unverifiable code as refuted; collapsing it into \texttt{verified} would be worse still. The system does neither.
+\textbf{Verification is tri-state.} A lookup returns \texttt{verified}, \texttt{not\_found}, or \texttt{unavailable}. The third state exists because the distinction between \emph{``the catalogue says this code does not exist''} and \emph{``we could not ask the catalogue''} is clinically consequential. Collapsing \texttt{unavailable} into \texttt{not\_found} would present an unverifiable code as refuted; collapsing it into \texttt{verified} would be more problematic still. The system does neither.
 
 ICD-11 is the case where this matters most. The WHO ICD-API is the authoritative source, and it requires OAuth2 credentials (free registration at \texttt{icd.who.int/icdapi}). Where credentials or network access are absent, the ICD-11 provider reports itself unavailable and the application degrades to the seed catalogue---it does not fabricate ICD-11 codes to fill the gap. The CC BY-ND 3.0 IGO licence on WHO ICD-11 content is a further reason to query rather than vendor: the no-derivatives clause forbids redistributing the catalogue in altered form, which a local transformed copy would do.
 
@@ -1286,9 +1286,9 @@ The presented 6-axis model is subject to several limitations that must be consid
 \section{Conclusion}
 \label{sec:conclusion}
 
-The proposed 6-axis system responds to a structural gap in psychiatric diagnostics that has persisted since the abolition of the DSM-IV multiaxial system. For clinical practice, the model's primary contribution lies in restoring and extending the structured prompt for comprehensive biopsychosocial assessment. The symmetric Axis~I/III architecture enables structured multi-professional collaboration, the coverage analysis provides clinicians with a transparent, quantitative metric for diagnostic completeness, and the CAVE alert system addresses the growing challenge of cross-axis risk management in complex cases. The PRO/CONTRA evidence evaluation with confidence estimation operationalizes diagnostic transparency in a way that supports both clinical accountability and training.
+The proposed 6-axis system responds to a structural gap in psychiatric diagnostics that has persisted since the abolition of the DSM-IV multiaxial system. For clinical practice, the model's primary contribution lies in restoring and extending the structured prompt for comprehensive biopsychosocial assessment. The symmetric Axis~I/III architecture enables structured interprofessional collaboration, the coverage analysis provides clinicians with a transparent, quantitative metric for diagnostic completeness, and the CAVE alert system addresses the growing challenge of cross-axis risk management in complex cases. The PRO/CONTRA evidence evaluation with confidence estimation operationalizes diagnostic transparency in a way that supports both clinical accountability and training.
 
-The model's architecture is consistent with the institutional direction of development (cf.\ Section~\ref{sec:introduction}). The convergence with the explicit call by \citet{ErlichFirst2025} for a return to structured axial assessment supports the timeliness of this contribution. At the same time, the model extends beyond institutional revisions, particularly through the coverage analysis and the operationalized case formulation (Axis~V) that bridges classification and treatment planning.
+The model's architecture is consistent with the institutional direction of development (cf.\ Section~\ref{sec:introduction}). The convergence with the explicit call by \citet{ErlichFirst2025} for a return to structured axial assessment underscores the timeliness of this contribution. At the same time, the model extends beyond institutional revisions, particularly through the coverage analysis and the operationalized case formulation (Axis~V) that bridges classification and treatment planning.
 
 Concrete next steps include: (1)~a focused expert review ($N = 5$--$10$) of the axis structure as an immediate minimal step, (2)~the inter-rater reliability study with standardized case vignettes (Phase~2, Section~\ref{sec:validation}), (3)~the development of the HL7 FHIR mapping specification, (4)~the publication of the formal mathematical specification of the coverage analysis, and (5)~empirical comparisons of free-text documentation versus structured multiaxial diagnostics. The complete source code is publicly available to support independent evaluation and replication.
 
