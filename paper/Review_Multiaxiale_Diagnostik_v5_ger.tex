@@ -82,7 +82,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent Die Abschaffung des multiaxialen Diagnosesystems im DSM-5 (2013) hinterlie\ss{} eine strukturelle L\"ucke in der psychiatrischen Diagnostik. Die vorliegende Arbeit pr\"asentiert ein 6-Achsen-Modell zur computergest\"utzten multiaxialen Diagnostik, das die kategoriale Klassifikation nach DSM-5-TR und ICD-11 mit der funktionalen Erfassung der ICF in einem Entscheidungsunterst\"utzungssystem vereint. Das Modell umfasst sechs Achsen: Achse~I (Psychische Profile mit temporaler Diagnostik und quantitativer Abdeckungsanalyse), Achse~II (dimensionale Pers\"onlichkeitsdiagnostik mittels PID-5 und biographische Kontextualisierung), Achse~III (Medizinische Synopse in symmetrischer Parallelstruktur zu Achse~I), Achse~IV (ICF-Integration, WHODAS~2.0, Cultural Formulation), Achse~V (operationalisierte Fallformulierung im 3P/4P-Modell) und Achse~VI (Evidenz-Matrix, CAVE-Warnhinweise, longitudinale Symptomverlaufsdokumentation). Drei zentrale Designbeitr\"age werden hervorgehoben: (1)~die quantitative Abdeckungsanalyse (Diagnostic Coverage Index) als prozentbasierte Metrik f\"ur diagnostische Vollst\"andigkeit, (2)~die symmetrische Achse-I/III-Architektur f\"ur interprofessionelle Zusammenarbeit und (3)~die operationalisierte Verbindung von Klassifikation und individualisierter Fallformulierung. Die 6-Stufen-Gatekeeper-Logik folgt der von First (2024) beschriebenen Differenzialdiagnostik-Sequenz. Eine Python-Referenzimplementierung als hierarchische Zustandsmaschine ist \"offentlich verf\"ugbar. Dies ist ein Methoden- und Designpapier; die empirische Validierung steht noch aus.
+\noindent Die Abschaffung des multiaxialen Diagnosesystems im DSM-5 (2013) hinterlie\ss{} eine strukturelle L\"ucke in der psychiatrischen Diagnostik. Die vorliegende Arbeit pr\"asentiert ein 6-Achsen-Modell zur computergest\"utzten multiaxialen Diagnostik. Drei Designvorschl\"age werden hervorgehoben: (1)~der Diagnostic Coverage Index als hypothesengenerierender Audit-Index f\"ur Verkn\"upfungen zwischen dokumentierten Symptomkonzepten und aktueller Formulierung, (2)~die symmetrische Achse-I/III-Architektur f\"ur interprofessionelle Dokumentation und (3)~die operationalisierte Verbindung von Klassifikation und Fallformulierung. Dies ist ein Methoden- und Designpapier; die empirische Validierung steht aus. Der DCI ist kein validiertes Ma\ss{} f\"ur diagnostische Vollst\"andigkeit, Genauigkeit oder Patientennutzen.
 
 \vspace{0.5em}
 \noindent \textbf{Schl\"usselbegriffe:} Multiaxiale Diagnostik, DSM-5-TR, ICD-11, Abdeckungsanalyse, Entscheidungsunterst\"utzungssystem, HiTOP, HL7 FHIR, Fallformulierung, ICF
@@ -325,7 +325,7 @@ Achse~I geht weit \"uber die einfache Diagnoseliste des DSM-5 hinaus, indem sie 
 
 Die Reihenfolge von Abdeckungsanalyse (Ii) vor Untersuchungsplan (Ij) folgt der klinischen Logik: Erst m\"ussen diagnostisch unerkl\"arte Symptome systematisch identifiziert werden, bevor gezielte Untersuchungen zu deren Kl\"arung geplant werden k\"onnen. Der Untersuchungsplan ergibt sich somit direkt aus den L\"ucken der Abdeckungsanalyse.
 
-\textbf{PRO/CONTRA-Evidenzbewertung:} Jede Diagnose erh\"alt eine strukturierte Evidenzbewertung mit expliziter Dokumentation der Befunde, die f\"ur (PRO) und gegen (CONTRA) die Diagnose sprechen, sowie eine numerische Konfidenzsch\"atzung (0--100\%). Diese Operationalisierung folgt dem Prinzip der differenzialdiagnostischen Transparenz: Der Kliniker muss nicht nur dokumentieren, \textit{dass} eine Diagnose gestellt wird, sondern \textit{warum} --- und welche Gegenargumente er erw\"agt und verworfen hat.
+\textbf{PRO/CONTRA-Evidenzbewertung:} Jede Diagnose erh\"alt eine strukturierte Evidenzbewertung sowie einen numerischen Konfidenzeintrag (0--100\%). Bis zu einer prospektiven Kalibrierung ist dieser Eintrag eine ausdr\"ucklich subjektive Einsch\"atzung, keine Wahrscheinlichkeit oder Sch\"atzung diagnostischer Genauigkeit. Er macht Begr\"undung und Unsicherheit sichtbar, zertifiziert aber keine Diagnose.
 
 \textbf{Quantitative Abdeckungsanalyse (Ii):} Eine Symptom-Diagnosen-Matrix quantifiziert den Grad der diagnostischen Erkl\"arung jedes Symptoms durch die aktiven Diagnosen. Die formale Definition, Schwellenwerte und Sensitivit\"atsanalyse werden in Abschnitt~\ref{sec:abdeckung} ausf\"uhrlich dargestellt.
 
@@ -368,7 +368,7 @@ Achse~IV kombiniert mehrere validierte Instrumente. Der \textbf{WHODAS~2.0} \cit
 
 WHODAS~2.0 und GAF messen \textit{fundamental unterschiedliche Konstrukte}: GAF vermengt Symptome und Funktionsniveau; WHODAS~2.0 misst Behinderung unabh\"angig von der Symptomschwere. \citet{Gspandl2018} fanden \textit{keine signifikante Korrelation} zwischen selbstbewertetem WHODAS~2.0 und GAF bei Schizophrenie-Spektrum-St\"orungen. Das System verwendet prim\"ar den WHODAS~2.0 f\"ur die Behinderungserfassung. Der GAF kann optional f\"ur die R\"uckw\"artskompatibilit\"at beibehalten werden, ist jedoch keine Kernkomponente des Modells.
 
-F\"ur den deutschen Kontext ist die \textbf{GdB-Integration} (Grad der Behinderung) essentiell. Der GdB verwendet eine 20--100-Skala ($\geq 50$ = Schwerbehinderung) und wird nach den Versorgungsmedizinischen Grunds\"atzen (VMG) bewertet.
+F\"ur den deutschen Kontext ist die \textbf{GdB-Integration} (Grad der Behinderung) essentiell. Der GdB verwendet eine 20--100-Skala ($\geq 50$ = Schwerbehinderung) und wird nach den Versorgungsmedizinischen Grunds\"atzen (VMG) bewertet. Internationale Implementierungen ben\"otigen das jeweilige individuelle, jurisdiktionsspezifische Verfahren. Populationsma\ss{}e wie DALYs sind keine individuelle Behinderungsbewertung und d\"urfen nicht zur Ableitung der Beeintr\"achtigung einer einzelnen Person verwendet werden.
 
 Drei \textbf{ICF-Core-Set}-Familien f\"ur psychische Gesundheit wurden f\"ur Depression, bipolare St\"orung und Schizophrenie entwickelt \citep{Cieza2004Depression, AyusoMateos2013Bipolar, GomezBenito2018Schizophrenia}: Depression (31~kurze/121~umfassende Kategorien), bipolare St\"orung (19/38) und Schizophrenie (25/97). F\"ur die praktische Implementierung ist das \textbf{Mini-ICF-P}-Rating von \citet{LindenBaron2005} mit 13~Kapazit\"atsdimensionen das effizienteste Werkzeug.
 
@@ -666,7 +666,7 @@ Die DSM-5 Field Trials \citep{Narrow2013} zeigten \textbf{gute bis exzellente Te
 
 Das DSM-5 Cross-Cutting-System umfasst eine separate \textbf{Elternberichtsversion f\"ur Kinder und Jugendliche} (6--17~Jahre) mit \textbf{25~Items \"uber 12~Dom\"anen}. Die Dom\"ane \glqq Pers\"onlichkeitsfunktion\grqq{} entf\"allt entwicklungsbedingt; stattdessen werden Reizbarkeit und \"Arger st\"arker gewichtet. Eine vollst\"andige Implementierung erfordert die p\"adiatrische Variante als separaten Einstiegspfad sowie altersangepasste Level-2-Instrumente.
 
-Das vorliegende System bevorzugt \textbf{ausschlie\ss{}lich frei verf\"ugbare Instrumente}; der propriet\"are CBCL/YSR-Komplex \citep{Achenbach2001} wird zwar als Referenzstandard anerkannt, aber durch lizenzfreie Alternativen ersetzt. Tabelle~\ref{tab:instrumente_kj} listet die empfohlene Auswahl freier K/J-Instrumente parallel zur Erwachsenenmatrix (Tabelle~\ref{tab:instrumente}).
+Das vorliegende System bevorzugt Instrumente ohne Kaufgeb\"uhr. Dies belegt jedoch keine Erlaubnis zur Reproduktion, \"Ubersetzung, Weitergabe, digitalen Durchf\"uhrung oder Implementierung der Auswertung. Diese Rechte sind vor Aufnahme instrument- und versionsbezogen zu pr\"ufen. Tabelle~\ref{tab:instrumente_kj} listet Kandidaten parallel zur Erwachsenenmatrix.
 
 \begin{table}[htbp]
 \centering
@@ -762,7 +762,7 @@ Funktionsf\"ahigkeit & WHODAS 2.0 (12) & 12 & Dimensional & N/A & Frei \\
 \end{CompactLongTable}
 \end{table}
 
-Alle empfohlenen Instrumente sind \textbf{frei verf\"ugbar} --- keine Lizenzkosten behindern die Implementierung. Die Auswahl basiert auf den jeweiligen Validierungspublikationen: PHQ-9 \citep{Levis2019}, GAD-7 \citep{Spitzer2006}, PCL-5 \citep{Blevins2015}, ITQ \citep{Cloitre2018}, PQ-16 \citep{Ising2012}, ASRS \citep{Kessler2005}, AQ-10 \citep{Allison2012}, AUDIT \citep{Saunders1993}, PID-5 \citep{OltmannsWidiger2018, Riegel2021}, C-SSRS \citep{Posner2011}, OCI-R \citep{Foa2002}, SSS-8 \citep{Gierk2014}, DES-II \citep{CarlsonPutnam1993}, SCOFF \citep{Morgan1999}, ISI \citep{Morin2011}. F\"ur die Interrater-Reliabilit\"at kategorialer DSM-5-Diagnosen siehe \citet{Regier2013} und \citet{Aboraya2006}.
+Die Matrix f\"uhrt Instrumente mit publizierten psychometrischen Untersuchungen und berichtetem geb\"uhrenfreiem Zugang auf. Die Evidenz gilt versions-, sprach-, populations- und settingspezifisch und validiert weder die Software noch ihre Einzelfallanwendung. Reproduktions-, \"Ubersetzungs-, Weitergabe-, Digital- und Auswertungsrechte erfordern eine gesonderte dokumentierte Lizenzpr\"ufung. Die Auswahl basiert auf den jeweiligen Validierungspublikationen: PHQ-9 \citep{Levis2019}, GAD-7 \citep{Spitzer2006}, PCL-5 \citep{Blevins2015}, ITQ \citep{Cloitre2018}, PQ-16 \citep{Ising2012}, ASRS \citep{Kessler2005}, AQ-10 \citep{Allison2012}, AUDIT \citep{Saunders1993}, PID-5 \citep{OltmannsWidiger2018, Riegel2021}, C-SSRS \citep{Posner2011}, OCI-R \citep{Foa2002}, SSS-8 \citep{Gierk2014}, DES-II \citep{CarlsonPutnam1993}, SCOFF \citep{Morgan1999}, ISI \citep{Morin2011}. F\"ur die Interrater-Reliabilit\"at kategorialer DSM-5-Diagnosen siehe \citet{Regier2013} und \citet{Aboraya2006}.
 
 
 % ===================================================================
@@ -806,7 +806,7 @@ Die engsten existierenden Parallelen sind: Komorbidit\"ats-Detektionsalgorithmen
 
 \subsection{Formale Definition der Abdeckungsanalyse}
 
-Sei $S = \{s_1, \ldots, s_n\}$ die Menge der beobachteten Symptome und $D = \{d_1, \ldots, d_m\}$ die Menge der etablierten Diagnosen. F\"ur jedes Symptom $s_i$ definieren wir die Abdeckungsfunktion $c(s_i) = \max_{d_j \in D} w(s_i, d_j)$, wobei $w(s_i, d_j) \in [0, 1]$ das Gewicht des Symptoms $s_i$ in der Diagnose $d_j$ gem\"a\ss{} den diagnostischen Kriterien repr\"asentiert. Die Gesamtabdeckung --- im Folgenden als \textbf{Diagnostic Coverage Index (DCI)} bezeichnet --- ergibt sich als $C_{\text{total}} = \frac{1}{n} \sum_{i=1}^{n} c(s_i)$.
+Sei $S = \{s_1, \ldots, s_n\}$ eine Menge normalisierter Symptomkonzepte und $D = \{d_1, \ldots, d_m\}$ die Menge etablierter Diagnosen. Vor der Berechnung werden Beobachtungen in einem Symptomkonzept-Ledger mit Konzept-ID, Quellinstrument/-item, Informant, Zeitfenster und Erhebungszeitpunkt normalisiert. Wiederholte oder semantisch \"uberlappende Beobachtungen werden geclustert und gehen h\"ochstens einmal in den Nenner ein; weitere Beobachtungen bleiben als best\"atigende Provenienz erhalten. Fehlende Angaben werden separat ausgewiesen. Der explorative \textbf{Diagnostic Coverage Index (DCI)} ist $C_{\text{total}} = \frac{1}{n} \sum_{i=1}^{n}\max_{d_j\in D}w(s_i,d_j)$. Er ist ein hypothesengenerierender Audit-Index, kein Ma\ss{} f\"ur diagnostische Vollst\"andigkeit, Genauigkeit, Validit\"at oder Patientennutzen.
 
 Die Symptomgewichte werden aus den diagnostischen Kriterien von DSM-5-TR und ICD-11 abgeleitet. Kriterien werden nach diagnostischer Salienz gewichtet: Kardinalsymptome erhalten hohe Gewichte ($w \geq 0{,}8$), w\"ahrend unspezifische Symptome niedrigere Gewichte ($0{,}3 \leq w \leq 0{,}7$) erhalten. Dieses initiale Gewichtungsschema ist heuristisch und bedarf empirischer Kalibrierung in zuk\"unftiger Arbeit.
 
@@ -814,13 +814,13 @@ Die Symptomgewichte werden aus den diagnostischen Kriterien von DSM-5-TR und ICD
 
 \subsection{Begr\"undung der Schwellenwerte und Sensitivit\"at}
 
-Die vorgeschlagenen Schwellenwerte (85\%/60\%) sind als \textit{vorl\"aufige, heuristische Ausgangswerte} zu verstehen, die auf Analogien zu verwandten, aber methodisch distinkten Metriken basieren: (1)~In der somatischen Medizin gelten diagnostische Sensitivit\"aten $\geq$85\% als klinisch akzeptabel f\"ur Screening-Zwecke \citep{Levis2019}; dieser Schwellenwert wurde auf die diagnostische Abdeckung \"ubertragen. (2)~Der untere Schwellenwert von 60\% orientiert sich an der Konvention, dass Fleiss'~$\kappa$-Werte $<$0,6 als ``unzureichende \"Ubereinstimmung'' klassifiziert werden. Es ist ausdr\"ucklich anzumerken, dass diagnostische Abdeckung ein anderes Konstrukt ist als Screening-Sensitivit\"at oder Interrater-\"Ubereinstimmung; die Analogien dienen lediglich als orientierende Anhaltspunkte, nicht als methodische Begr\"undung. Diese Ausgangswerte m\"ussen zwingend durch empirische Kalibrierung in mindestens drei klinischen Kohorten (station\"ar, ambulant, somatisch komorbid) ersetzt werden. Hinsichtlich der Sensitivit\"at der Gesamtmetrik: Da $C_{\text{total}}$ ein arithmetisches Mittel \"uber $n$ Symptome ist, ver\"andert eine Einzelgewichts\"anderung von $\Delta w$ den Gesamtwert um $\Delta C = \Delta w / n$. Bei typischen Symptomzahlen ($n = 8$--$15$) f\"uhrt eine Fehlsch\"atzung eines einzelnen Gewichts um $\pm 0{,}2$ zu einer Gesamtverschiebung von lediglich $\pm 1{,}3$--$2{,}5$ Prozentpunkten --- was die Robustheit der Metrik gegen\"uber moderaten Gewichtungsfehlern belegt, aber auch zeigt, dass bei wenigen Symptomen ($n < 5$) die Metrik instabil wird.
+Die vorgeschlagenen Schwellenwerte (85\%/60\%) sind lediglich vorl\"aufige Anzeigekategorien aus konstruktfremden Analogien, keine klinischen Entscheidungsschwellen. Sie ben\"otigen prospektive Kalibrierung. Die Beziehung $\Delta C=\Delta w/n$ beschreibt nur eine isolierte Gewichts\"anderung; sie belegt keine Robustheit gegen duplizierte Konzepte, korrelierte Instrumentitems, systematische Gewichtsfehler, Target Leakage oder Ontologie\"anderungen. Bis diese Fehlerarten Negativkontrollen und Cluster-/Instrument-Resampling bestanden haben, d\"urfen Schwellen keine klinische Handlung steuern; Ergebnisse sind mit Sensitivit\"atsbereich statt als Pr\"azisionsprozent auszugeben.
 
 \subsection{Implementierung}
 
 Die Implementierung arbeitet wie folgt: (1)~Sammlung aller best\"atigten Symptome \"uber alle Screening-Instrumente, (2)~Zuordnung jedes Symptoms zu den diagnostischen Kriterien, die es erf\"ullt, (3)~Berechnung eines Abdeckungsprozentsatzes pro Symptom, der den Grad der diagnostischen Erkl\"arung quantifiziert, (4)~Klassifikation als vollst\"andig abgedeckt ($\geq$85\%), partiell abgedeckt (60--84\%) oder unzureichend abgedeckt ($<$60\%), (5)~Berechnung eines Gesamtabdeckungswerts als gewichteter Mittelwert \"uber alle Symptome, (6)~Pr\"asentation der Ergebnisse als Symptom-Diagnosen-Matrix mit visueller Hervorhebung diagnostischer L\"ucken. Das 4P-Modell (Achse~V) dient als nat\"urliches Komplement: Symptome, die nicht durch Achse-I-Diagnosen abgedeckt sind (Achse~Ii), sollten durch die Achse-V-Formulierung erkl\"arbar sein; solche, die es nicht sind, repr\"asentieren genuine diagnostische L\"ucken und m\"unden in den priorisierten Untersuchungsplan (Achse~Ij).
 
-Die quantitative Metrik (z.\,B.\ \glqq Gesamtabdeckung: $\sim$88\%\grqq{}) liefert dem Kliniker eine unmittelbare R\"uckmeldung \"uber die Vollst\"andigkeit seiner diagnostischen Arbeit. Verwandte Ans\"atze existieren in Bayesianischen Diagnosesystemen (z.\,B.\ DXplain, Isabel Healthcare), die Symptom-Diagnose-Zuordnungen vornehmen; der spezifische Beitrag der vorliegenden Abdeckungsanalyse liegt in der transparenten, prozentbasierten Darstellung als klinische Qualit\"atssicherungsmetrik.
+Der explorative Index kann Kandidaten f\"ur Informationsl\"ucken markieren; er darf nicht als quantitativer Nachweis diagnostischer Vollst\"andigkeit dargestellt werden. Ein Wert wird nur angezeigt, wenn Provenienz- und Dublettenpr\"ufung bestanden sind und Roh-/deduplizierter Wert, Duplicate-Item-, Relabelled-Axis- und Target-Leakage-Negativkontrollen dokumentiert sind.
 
 Es sei angemerkt, dass der Begriff \glqq Abdeckungsanalyse\grqq{} (\textit{coverage analysis}) in der medizinischen Informatik prim\"ar f\"ur die terminologische Zuordnung zwischen Klassifikationssystemen verwendet wird (z.\,B.\ ICF vs.\ SNOMED~CT f\"ur die Behinderungsbewertung). Das vorliegende Modell rekonzeptualisiert die Abdeckungsanalyse als klinische Qualit\"atssicherungsmetrik: Statt die \"Uberlappung zwischen Terminologien zu messen, quantifiziert sie den Anteil des Symptomprofils eines Patienten, der durch aktuelle Diagnosen erkl\"art wird.
 
@@ -1043,6 +1043,7 @@ Frühere Versionen lieferten einen handkuratierten Seed-Katalog psychiatrischer 
 \centering
 \caption{Angebundene externe Klassifikationskataloge}
 \label{tab:katalog-anbindung}
+\footnotesize
 \begin{tabularx}{\textwidth}{lXll}
 \toprule
 \textbf{Katalog} & \textbf{Angebunden über} & \textbf{Datenlizenz} & \textbf{Betriebsart} \\
@@ -1052,6 +1053,7 @@ ICD-10-CM (USA) & \texttt{simple-icd-10\allowbreak-cm} & Public Domain (CDC/NCHS
 ICD-11 (WHO) & \texttt{simple-icd-11} $\rightarrow$ WHO ICD-API & CC BY-ND 3.0 IGO & Online, zugangsgebunden \\
 \bottomrule
 \end{tabularx}
+\normalsize
 \end{table}
 
 Zwei Eigenschaften der Anbindung sind bewusste Entwurfsentscheidungen und keine Implementierungsdetails.
@@ -1123,11 +1125,11 @@ P3 (Aufrechterhaltung): Sozialer R\"uckzug, unbehandelte Hypothyreose, Schmerzch
 P4 (Protektiv): Durchschnittliche Intelligenz, stabile Wohnsituation, Problembewusstsein.
 \item[Achse~VI (Belegsammlung)]
 Evidenz-Matrix: PHQ-9 (21.02.2026), GAD-7 (21.02.2026), Labor (TSH, CRP --- 15.02.2026). \\
-CAVE: Hypothyreose beitragende Ursache der Fatigue --- Schilddr\"usenparameter vor Antidepressiva-Einstellung kontrollieren! \\
+CAVE: Hypothyreose kann zur Fatigue beitragen --- Schilddr\"usenstatus und Behandlung parallel pr\"ufen; eine sonst indizierte oder dringliche Depressionsbehandlung nicht allein bis zum Testergebnis verz\"ogern. \\
 Symptomverlauf: Antriebslosigkeit seit November 2025, progredient; R\"uckenschmerzen seit 2024, fluktuierend.
 \end{description}
 
-\noindent Diese Vignette illustriert, wie das 6-Achsen-Modell eine integrierte diagnostische Perspektive erm\"oglicht: Die Abdeckungsanalyse (78\%) --- berechnet als $C_{\text{total}} = \frac{1}{n} \sum c(s_i)$ \"uber die Symptome Niedergeschlagenheit, Antriebslosigkeit, Schlafst\"orungen, Sorgen, R\"uckenschmerzen und Konzentrationsst\"orungen, wobei R\"uckenschmerzen und Konzentrationsst\"orungen nur partiell durch bestehende Diagnosen abgedeckt sind (vgl.\ Abschnitt~\ref{sec:abdeckung}) --- identifiziert ungekl\"arte Symptome. Der CAVE-Hinweis verhindert eine vorschnelle Antidepressiva-Einstellung ohne Schilddr\"usenkontrolle, und das Bedingungsmodell verbindet biographische Vulnerabilit\"at mit aktuellem Ausl\"oser.
+\noindent Diese Vignette illustriert den vorgeschlagenen Ablauf, nicht klinische Validit\"at. Der beispielhafte DCI von 78\% besitzt keine kalibrierte klinische Interpretation und demonstriert nur die Berechnung. Der CAVE-Hinweis markiert einen m\"oglichen Schilddr\"usenbeitrag zur parallelen fachlichen Pr\"ufung; der Zeitpunkt einer Behandlung bleibt eine individualisierte klinische Entscheidung.
 
 
 % ===================================================================
@@ -1173,7 +1175,7 @@ Die Nutzung eines computergest\"utzten Diagnosesystems verschiebt nicht die Haft
 \item[Behandler-Haftung bleibt bestehen] Der behandelnde Arzt oder Psychotherapeut bleibt vollumf\"anglich haftbar f\"ur diagnostische Fehlentscheidungen, auch wenn diese durch ein algorithmisches System unterst\"utzt wurden. Das System ist ein Werkzeug, kein Entscheidungstr\"ager.
 \item[Sorgfaltspflicht bei Systemnutzung] Kliniker m\"ussen das System sachgem\"a\ss{} nutzen und dessen Grenzen kennen. Eine blinde \"Ubernahme algorithmischer Diagnosevorschl\"age ohne klinische Pr\"ufung erf\"ullt nicht die \"arztliche Sorgfaltspflicht.
 \item[Dokumentationspflicht] Die Nutzung des Systems und die klinische \"Uberpr\"ufung der Systemvorschl\"age sollten dokumentiert werden (Achse~VI, Kontaktprotokoll). Dies dient der Nachvollziehbarkeit im Haftungsfall.
-\item[Produkthaftung des Entwicklers] Der Systementwickler haftet f\"ur nachweisliche Softwarefehler (z.\,B.\ falsche Implementierung von DSM-5-TR-Kriterien, Rechenfehler in der Abdeckungsanalyse). Die Open-Source-Ver\"offentlichung (Abschnitt~\ref{sec:technik}) erm\"oglicht externe Code-Reviews und erh\"oht die Transparenz.
+\item[Verantwortung und Produkthaftung] Verantwortung kann sich auf Behandelnde, Betreiber, Einrichtungen, Anbieter und Entwickler verteilen. Open-Source-Lizenz und Gew\"ahrleistungsausschl\"usse bestimmen oder beseitigen gesetzliche Haftung nicht automatisch. Pflichten, Fehler, Schaden und Kausalit\"at sind rechtsraumspezifisch zu pr\"ufen.
 \item[Medizinprodukt-Einstufung bedarf juristischer Kl\"arung] Nach EU-Medizinprodukteverordnung (MDR 2017/745) sind reine Dokumentationssysteme ohne therapeutische oder pr\"adiktive Funktion nicht zwingend als Medizinprodukt einzustufen. Das vorliegende System geht jedoch \"uber reine Dokumentation hinaus: Die Gatekeeper-Logik, die algorithmischen Entscheidungsb\"aume und die Diagnosevorschl\"age k\"onnten als Entscheidungsunterst\"utzungssoftware im Sinne der MDR klassifiziert werden. Eine juristische Pr\"ufung dieser Einstufung ist daher \textit{zwingend erforderlich}, bevor das System in der klinischen Praxis eingesetzt wird.
 \end{description}
 
@@ -1235,13 +1237,13 @@ Tabelle~\ref{tab:validierungs-gate-ledger} ist damit eine Designanforderungstabe
 
 \textbf{Stimulusmaterial:} 20 standardisierte Fallvignetten (10 einfache F\"alle mit Einzeldiagnose, 10 komplexe F\"alle mit Komorbidit\"at), erstellt nach Vorbild der DSM-5-TR Clinical Cases \citep{BarnhillDSM5ClinicalCases}. Jede Vignette enth\"alt: Anamnese, aktuelle Beschwerden, Symptomverlauf, relevante medizinische Vorgeschichte, soziales Umfeld. Diagnosen vorab durch Expertenpanel (2 unabh\"angige Fach\"arzte + Konsensprozess) als Goldstandard etabliert.
 
-\textbf{Prozedur:} Jeder Rater diagnostiziert alle 20 Vignetten (1) mit konventionellem Vorgehen (Freitext-Diagnose mit Begr\"undung), (2) mit dem 6-Achsen-System (vollst\"andige Achsendiagnostik). Reihenfolge der Methoden randomisiert; mindestens 1 Woche Washout zwischen Bedingungen pro Vignette.
+\textbf{Prozedur:} Phase~2 ist eine Machbarkeitsstudie zur Sch\"atzung der Reliabilit\"at, keine initiale Systemvalidierung. Die Rater bearbeiten zwei gematchte, nicht \"uberlappende Vignettens\"atze, je einen pro Methode; die S\"atze werden zwischen randomisierten Reihenfolgen gekreuzt. Perioden- und Sequenzeffekte werden ausgewiesen. Das Expertenpanel liefert eine verblindete Konsensreferenz mit dokumentierter Uneinigkeit und Unsicherheit, keinen Goldstandard.
 
 \textbf{Prim\"are Outcome-Variablen:}
 \begin{itemize}[leftmargin=*, noitemsep]
     \item \textit{Inter-Rater-Reliabilit\"at:} Fleiss' $\kappa$ f\"ur kategoriale Diagnosen (Achse~I Prim\"ardiagnose); Intraklassen-Korrelation (ICC) f\"ur dimensionale Ratings (PID-5-BF auf Achse~II, WHODAS~2.0 auf Achse~IV). Akzeptanzkriterium: $\kappa \geq 0{,}7$ (substanzielle \"Ubereinstimmung); ICC $\geq 0{,}75$.
-    \item \textit{Konvergente Validit\"at:} \"Ubereinstimmung 6-Achsen-Diagnosen vs.\ Goldstandard. Sensitivit\"at und Spezifit\"at pro Diagnose.
-    \item \textit{Inkrementelle Validit\"at der Abdeckungsanalyse:} Anteil der F\"alle, in denen Achse~Ii (unerkl\"arte Symptome) klinisch relevante Differenzialdiagnosen identifiziert, die im Freitext-Vorgehen \"ubersehen wurden. Hypothese: $\geq 20$\,\% der komplexen F\"alle profitieren von Abdeckungsanalyse.
+    \item \textit{\"Ubereinstimmung mit der Konsensreferenz:} Deskriptive \"Ubereinstimmung und exakte Konfidenzintervalle. Diagnosespezifische Sensitivit\"at und Spezifit\"at erfordern eine sp\"atere, separat gepowerte Stichprobe.
+    \item \textit{Exploratives DCI-Signal:} Verblindete Beurteilung handlungsrelevanter Informationsl\"ucken und Fehlalarmrate. Der Pilot testet keine konfirmatorische Patientennutzenhypothese.
     \item \textit{Bearbeitungszeit:} Durchschnittliche Bearbeitungszeit pro Vignette (konventionell vs.\ 6-Achsen).
 \end{itemize}
 
@@ -1252,7 +1254,7 @@ Tabelle~\ref{tab:validierungs-gate-ledger} ist damit eine Designanforderungstabe
     \item Qualitative Interviews zu identifizierten Schwachstellen des Systems
 \end{itemize}
 
-\textbf{Power-Analyse:} Bei $N = 10$ Ratern und $k = 20$ Vignetten (Targets) kann ein ICC $= 0{,}75$ mit Power $1 - \beta = 0{,}8$ und $\alpha = 0{,}05$ gegen die Nullhypothese ICC $= 0{,}5$ getestet werden. Die pr\"azise KI-Breite h\"angt von der Anzahl der Targets ab, nicht von der Gesamtzahl der Urteile ($N \times k = 200$), da diese nicht unabh\"angig sind. Bei $k = 20$ Targets und $N = 10$ Ratern ist ein 95\%-KI von ungef\"ahr $\pm 0{,}15$ zu erwarten \citep{Shrout1979}. Eine Erh\"ohung auf $k = 30$ Vignetten w\"urde die Pr\"azision substanziell verbessern und sollte bei ausreichenden Ressourcen angestrebt werden.
+\textbf{Stichprobenstatus:} $N=10$ Rater und 20 Vignetten bilden eine Machbarkeitsstichprobe f\"ur Ablauf, Rekrutierung, Missingness, Varianzkomponenten und Intervallsch\"atzung. Vor Rekrutierung sind ein prim\"arer Estimand und Analysemodell zu pr\"aregistrieren und die Zielstichprobe per Pr\"azisionsrechnung oder Simulation festzulegen. Der Pilot ist nicht f\"ur diagnosespezifische Genauigkeit, Patientennutzen oder \"Uberlegenheitsclaims gepowert.
 
 \textbf{Falsifikationskriterium:} Falls $\kappa < 0{,}6$ oder ICC $< 0{,}65$, ist die Inter-Rater-Reliabilit\"at unzureichend --- dies erfordert Revision der Achsenstruktur oder klarere Operationalisierungen.
 
@@ -1271,7 +1273,7 @@ Der MentalBench-Benchmark \citep{Song2026MentalBench} zeigt, dass gro\ss{}e Spra
 
 F\"ur die Integration in bestehende Gesundheitsinformationssysteme muss das 6-Achsen-Modell standardkonforme Schnittstellen implementieren.
 
-\textbf{HL7 FHIR (R4):} Die Achsen lassen sich auf FHIR-Ressourcen abbilden: Achse~I/III-Diagnosen als \texttt{Condition}-Ressourcen mit Extensions f\"ur Subachsen-Zuordnung; Screening-Ergebnisse als \texttt{QuestionnaireResponse}; Funktionsstatus (Achse~IV) als \texttt{ClinicalImpression}; die Fallformulierung (Achse~V) als \texttt{CarePlan}; Belege (Achse~VI) als \texttt{DocumentReference}.
+\textbf{HL7 FHIR (R4):} Die folgenden Zuordnungen sind Kandidaten f\"ur einen k\"unftigen Implementation Guide, kein Interoperabilit\"atsnachweis. Diagnosen k\"onnten \nolinkurl{Condition}, Fragebogenantworten \nolinkurl{QuestionnaireResponse}, skalierte Funktions- und Assessmentergebnisse \nolinkurl{Observation}, die klinische Synthese gegebenenfalls \nolinkurl{ClinicalImpression}, Behandlungsplanung \nolinkurl{CarePlan} und Quelldokumente \nolinkurl{DocumentReference} verwenden. Die endg\"ultige Profilwahl erfordert Workflow-, Terminologie-, Provenienz-, Einwilligungs-, Rechtsraum- und Konformit\"atspr\"ufung.
 
 \textbf{SNOMED CT:} Alle Diagnosen sollten neben DSM-5-TR- und ICD-11-Codes auch SNOMED-CT-Konzept-IDs f\"uhren, um internationale Interoperabilit\"at zu gew\"ahrleisten.
 
@@ -1357,7 +1359,7 @@ Das vorgestellte 6-Achsen-Modell unterliegt mehreren Limitationen, die bei der I
 \section{Zusammenfassung}
 \label{sec:zusammenfassung}
 
-Das vorgeschlagene 6-Achsen-System adressiert eine strukturelle L\"ucke in der psychiatrischen Diagnostik, die seit der Abschaffung des DSM-IV-Multiaxialsystems besteht. F\"ur die klinische Praxis liegt der prim\"are Beitrag des Modells in der Wiederherstellung --- und substanziellen Erweiterung --- der strukturierten Aufforderung zur umfassenden biopsychosozialen Beurteilung. Die symmetrische Achse-I/III-Architektur erm\"oglicht strukturierte interprofessionelle Zusammenarbeit, die Abdeckungsanalyse liefert Klinikern eine transparente, quantitative Metrik f\"ur diagnostische Vollst\"andigkeit, und das CAVE-Warnsystem adressiert die wachsende Herausforderung des achsen\"ubergreifenden Risikomanagements bei komplexen F\"allen. Die PRO/CONTRA-Evidenzbewertung mit Konfidenzsch\"atzung operationalisiert diagnostische Transparenz in einer Weise, die sowohl klinische Rechenschaftspflicht als auch Ausbildung unterst\"utzt.
+Das vorgeschlagene 6-Achsen-System ist derzeit ein evaluierbarer Designvorschlag f\"ur strukturierte biopsychosoziale Dokumentation. Ob die symmetrische Architektur interprofessionelle Arbeit verbessert, der DCI n\"utzliche Informationsl\"ucken erkennt oder CAVE-Hinweise Sicherheit erh\"ohen, bleibt empirisch zu pr\"ufen. PRO/CONTRA-Eintr\"age und unkalibrierte Konfidenzwerte sind Nachvollziehbarkeitshilfen, keine Evidenz f\"ur diagnostische Genauigkeit oder klinischen Nutzen.
 
 Die Architektur des Modells ist konsistent mit der institutionellen Entwicklungsrichtung (vgl.\ Abschnitt~\ref{sec:einleitung}). Die Konvergenz mit der expliziten Forderung von \citet{ErlichFirst2025} nach einer R\"uckkehr zur strukturierten axialen Beurteilung unterstreicht die Aktualit\"at dieses Beitrags. Zugleich geht das Modell \"uber institutionelle Revisionen hinaus, insbesondere durch die Abdeckungsanalyse und die operationalisierte Fallformulierung (Achse~V), die Klassifikation und Behandlungsplanung verbr\"uckt.
 
