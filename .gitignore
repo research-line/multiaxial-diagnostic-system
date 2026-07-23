@@ -211,3 +211,6 @@ credentials.json
 _archive/
 Plan.txt
 # <<< RESEARCH-PIPELINE MANAGED GITIGNORE <<<
+
+# D-20260714-013: private planning/steering file, untracked
+_results/Konzept_Dimensionale_Integration.md
