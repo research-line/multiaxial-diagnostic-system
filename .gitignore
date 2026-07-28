@@ -212,5 +212,7 @@ _archive/
 Plan.txt
 # <<< RESEARCH-PIPELINE MANAGED GITIGNORE <<<
 
-# D-20260714-013: private planning/steering file, untracked
-_results/Konzept_Dimensionale_Integration.md
+# [U 2026-07-28 D-20260727-003] Enge öffentliche Ausnahme:
+# README verweist ausdrücklich auf das Konzeptpapier; die Fallvignette ist
+# generisch und enthält keine identifizierenden persönlichen Informationen.
+!_results/Konzept_Dimensionale_Integration.md
